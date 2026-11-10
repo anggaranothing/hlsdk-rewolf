@@ -42,9 +42,11 @@ enum shotgun_e {
 class CShotgun : public CBasePlayerWeapon
 {
 public:
+#ifndef CLIENT_DLL
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
+#endif
 
 	void Spawn( void );
 	void Precache( void );
@@ -68,6 +70,7 @@ private:
 LINK_ENTITY_TO_CLASS( weapon_shotgun, CShotgun );
 
 
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION	CShotgun::m_SaveData[] = 
 {
 	DEFINE_FIELD( CShotgun, m_flNextReload, FIELD_TIME ),
@@ -77,6 +80,7 @@ TYPEDESCRIPTION	CShotgun::m_SaveData[] =
 	DEFINE_FIELD( CShotgun, m_flPumpTime, FIELD_TIME ),
 };
 IMPLEMENT_SAVERESTORE( CShotgun, CBasePlayerWeapon );
+#endif
 
 
 
@@ -187,7 +191,11 @@ void CShotgun::PrimaryAttack()
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 
-	if ( g_pGameRules->IsDeathmatch() )
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
+	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		// altered deathmatch spread
 		m_pPlayer->FireBullets( 4, vecSrc, vecAiming, VECTOR_CONE_DM_SHOTGUN, 2048, BULLET_PLAYER_BUCKSHOT, 0 );
@@ -245,7 +253,11 @@ void CShotgun::SecondaryAttack( void )
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	
-	if ( g_pGameRules->IsDeathmatch() )
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
+	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		// tuned for deathmatch
 		m_pPlayer->FireBullets( 8, vecSrc, vecAiming, VECTOR_CONE_DM_DOUBLESHOTGUN, 2048, BULLET_PLAYER_BUCKSHOT, 0 );

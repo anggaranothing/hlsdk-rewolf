@@ -40,6 +40,7 @@ enum satchel_radio_e {
 
 
 
+#ifndef CLIENT_DLL
 class CSatchelCharge : public CGrenade
 {
 	void Spawn( void );
@@ -77,9 +78,9 @@ void CSatchelCharge :: Spawn( void )
 	UTIL_SetSize(pev, Vector( -4, -4, -4), Vector(4, 4, 4));	// Uses point-sized, and can be stepped over
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetTouch( SatchelSlide );
-	SetUse( DetonateUse );
-	SetThink( SatchelThink );
+	SetTouch( &CSatchelCharge::SatchelSlide );
+	SetUse(&CSatchelCharge::DetonateUse );
+	SetThink(&CSatchelCharge::SatchelThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	pev->gravity = 0.5;
@@ -166,13 +167,16 @@ void CSatchelCharge :: BounceSound( void )
 	case 2:	EMIT_SOUND(ENT(pev), CHAN_VOICE, "weapons/g_bounce3.wav", 1, ATTN_NORM);	break;
 	}
 }
+#endif
 
 class CSatchel : public CBasePlayerWeapon
 {
 public:
+#ifndef CLIENT_DLL
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
+#endif
 
 	void Spawn( void );
 	void Precache( void );
@@ -193,11 +197,13 @@ public:
 };
 LINK_ENTITY_TO_CLASS( weapon_satchel, CSatchel );
 
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION	CSatchel::m_SaveData[] = 
 {
 	DEFINE_FIELD( CSatchel, m_chargeReady, FIELD_INTEGER ),
 };
 IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon );
+#endif
 
 //=========================================================
 // CALLED THROUGH the newly-touched weapon's instance. The existing player weapon is pOriginal
@@ -206,7 +212,11 @@ int CSatchel::AddDuplicate( CBasePlayerItem *pOriginal )
 {
 	CSatchel *pSatchel;
 
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		pSatchel = (CSatchel *)pOriginal;
 
@@ -355,7 +365,7 @@ void CSatchel::Holster( int skiplocal /* = 0 */ )
 	if ( !m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] && !m_chargeReady )
 	{
 		m_pPlayer->pev->weapons &= ~(1<<WEAPON_SATCHEL);
-		SetThink( DestroyItem );
+		SetThink( &CSatchel::DestroyItem );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
@@ -377,6 +387,7 @@ void CSatchel::PrimaryAttack()
 
 		edict_t *pPlayer = m_pPlayer->edict( );
 
+#ifndef CLIENT_DLL
 		CBaseEntity *pSatchel = NULL;
 
 		while ((pSatchel = UTIL_FindEntityInSphere( pSatchel, m_pPlayer->pev->origin, 4096 )) != NULL)
@@ -390,6 +401,7 @@ void CSatchel::PrimaryAttack()
 				}
 			}
 		}
+#endif
 
 		if (m_chargeReady == 1)
 		{
@@ -433,12 +445,17 @@ void CSatchel::Throw( void )
 
 		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
 
+#ifndef CLIENT_DLL
 		CBaseEntity *pSatchel = Create( "monster_satchel", vecSrc, Vector( 0, 0, 0), m_pPlayer->edict() );
 		pSatchel->pev->velocity = vecThrow;
 		pSatchel->pev->avelocity.y = 400;
 
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel_radio.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel_radio.mdl");
+#else
+		LoadVModel ( "models/v_satchel_radio.mdl", m_pPlayer );
+#endif
+
 		SendWeaponAnim( SATCHEL_RADIO_DRAW );
 
 		// player "shoot" animation
@@ -479,8 +496,13 @@ void CSatchel::WeaponIdle( void )
 			return;
 		}
 
+#ifndef CLIENT_DLL
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel.mdl");
+#else
+		LoadVModel ( "models/v_satchel.mdl", m_pPlayer );
+#endif
+
 		SendWeaponAnim( SATCHEL_DRAW );
 
 		// use tripmine animations
@@ -494,6 +516,7 @@ void CSatchel::WeaponIdle( void )
 	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );// how long till we do this again.
 }
 
+#ifndef CLIENT_DLL
 //=========================================================
 // DeactivateSatchels - removes all satchels owned by
 // the provided player. Should only be used upon death.
@@ -522,5 +545,6 @@ void DeactivateSatchels( CBasePlayer *pOwner )
 		pFind = FIND_ENTITY_BY_CLASSNAME( pFind, "monster_satchel" );
 	}
 }
+#endif
 
 #endif

@@ -68,6 +68,18 @@ void AlertMessage( ALERT_TYPE atype, char *szFmt, ... )
 	gEngfuncs.Con_Printf( string );
 }
 
+//Returns if it's multiplayer.
+//Mostly used by the client side weapons.
+bool bIsMultiplayer ( void )
+{
+	return gEngfuncs.GetMaxClients() == 1 ? 0 : 1;
+}
+//Just loads a v_ model.
+void LoadVModel ( char *szViewModel, CBasePlayer *m_pPlayer )
+{
+	gEngfuncs.CL_LoadModel( szViewModel, &m_pPlayer->pev->viewmodel );
+}
+
 /*
 =====================
 HUD_PrepEntity

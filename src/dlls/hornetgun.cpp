@@ -89,11 +89,14 @@ int CHgun::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
+
+#ifndef CLIENT_DLL
 		if ( g_pGameRules->IsMultiplayer() )
 		{
 			// in multiplayer, all hivehands come full. 
 			pPlayer->m_rgAmmo[ PrimaryAmmoIndex() ] = HORNET_MAX_CARRY;
 		}
+#endif
 
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 			WRITE_BYTE( m_iId );
@@ -149,10 +152,13 @@ void CHgun::PrimaryAttack()
 		return;
 	}
 
+#ifndef CLIENT_DLL
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 
 	CBaseEntity *pHornet = CBaseEntity::Create( "hornet", m_pPlayer->GetGunPosition( ) + gpGlobals->v_forward * 16 + gpGlobals->v_right * 8 + gpGlobals->v_up * -12, m_pPlayer->pev->v_angle, m_pPlayer->edict() );
 	pHornet->pev->velocity = gpGlobals->v_forward * 300;
+
+#endif
 	
 	m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 	m_flRechargeTime = gpGlobals->time + 0.5;
@@ -186,6 +192,8 @@ void CHgun::SecondaryAttack( void )
 		return;
 	}
 
+	//Wouldn't be a bad idea to completely predict these, since they fly so fast...
+#ifndef CLIENT_DLL
 	CBaseEntity *pHornet;
 	Vector vecSrc;
 
@@ -231,7 +239,9 @@ void CHgun::SecondaryAttack( void )
 	pHornet->pev->velocity = gpGlobals->v_forward * 1200;
 	pHornet->pev->angles = UTIL_VecToAngles( pHornet->pev->velocity );
 
-	pHornet->SetThink( CHornet::StartDart );
+	pHornet->SetThink( &CHornet::StartDart );
+
+#endif
 
 	m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 	m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;

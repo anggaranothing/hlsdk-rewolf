@@ -54,9 +54,11 @@ enum egon_e {
 class CEgon : public CBasePlayerWeapon
 {
 public:
+#ifndef CLIENT_DLL
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
+#endif
 
 	void Spawn( void );
 	void Precache( void );
@@ -120,6 +122,7 @@ int CEgon::g_fireAnims1[] = { EGON_FIRE1, EGON_FIRE2, EGON_FIRE3, EGON_FIRE4 };
 int CEgon::g_fireAnims2[] = { EGON_ALTFIRECYCLE };
 
 
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION	CEgon::m_SaveData[] = 
 {
 	DEFINE_FIELD( CEgon, m_pBeam, FIELD_CLASSPTR ),
@@ -132,6 +135,7 @@ TYPEDESCRIPTION	CEgon::m_SaveData[] =
 	DEFINE_FIELD( CEgon, m_flAmmoUseTime, FIELD_TIME ),
 };
 IMPLEMENT_SAVERESTORE( CEgon, CBasePlayerWeapon );
+#endif
 
 
 void CEgon::Spawn( )
@@ -222,7 +226,11 @@ int CEgon::GetItemInfo(ItemInfo *p)
 
 float CEgon::GetPulseInterval( void )
 {
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		return 0.1;
 	}
@@ -232,7 +240,11 @@ float CEgon::GetPulseInterval( void )
 
 float CEgon::GetDischargeInterval( void )
 {
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		return 0.1;
 	}
@@ -347,6 +359,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	if (tr.fAllSolid)
 		return;
 
+#ifndef CLIENT_DLL
 	CBaseEntity *pEntity = CBaseEntity::Instance(tr.pHit);
 
 	if (pEntity == NULL)
@@ -364,11 +377,15 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 		}
 	}
 
+
+#endif
+
 	float timedist;
 
 	switch ( m_fireMode )
 	{
 	case FIRE_NARROW:
+#ifndef CLIENT_DLL
 		if ( pev->dmgtime < gpGlobals->time )
 		{
 			// Narrow mode only does damage to the entity it hits
@@ -400,10 +417,12 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 
 			pev->dmgtime = gpGlobals->time + GetPulseInterval();
 		}
+#endif
 		timedist = ( pev->dmgtime - gpGlobals->time ) / GetPulseInterval();
 		break;
 	
 	case FIRE_WIDE:
+#ifndef CLIENT_DLL
 		if ( pev->dmgtime < gpGlobals->time )
 		{
 			// wide mode does damage to the ent, and radius damage
@@ -449,6 +468,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 				m_shakeTime = gpGlobals->time + 1.5;
 			}
 		}
+#endif
 		timedist = ( pev->dmgtime - gpGlobals->time ) / GetDischargeInterval();
 		break;
 	}
@@ -465,6 +485,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 
 void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, float timeBlend )
 {
+#ifndef CLIENT_DLL
 	if ( !m_pBeam )
 	{
 		CreateEffect();
@@ -486,11 +507,15 @@ void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, floa
 		m_pSprite->pev->frame = 0;
 
 	m_pNoise->SetStartPos( endPoint );
-}
 
+#endif
+
+}
 
 void CEgon::CreateEffect( void )
 {
+
+#ifndef CLIENT_DLL
 	DestroyEffect();
 
 	m_pBeam = CBeam::BeamCreate( EGON_BEAM_SPRITE, 40 );
@@ -525,11 +550,15 @@ void CEgon::CreateEffect( void )
 		m_pNoise->SetColor( 80, 120, 255 );
 		m_pNoise->SetNoise( 2 );
 	}
+#endif
+
 }
 
 
 void CEgon::DestroyEffect( void )
 {
+
+#ifndef CLIENT_DLL
 	if ( m_pBeam )
 	{
 		UTIL_Remove( m_pBeam );
@@ -548,6 +577,8 @@ void CEgon::DestroyEffect( void )
 			UTIL_Remove( m_pSprite );
 		m_pSprite = NULL;
 	}
+#endif
+
 }
 
 

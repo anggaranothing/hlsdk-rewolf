@@ -118,7 +118,11 @@ void CPython::Precache( void )
 
 BOOL CPython::Deploy( )
 {
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		// enable laser sight geometry.
 		pev->body = 1;
@@ -148,7 +152,11 @@ void CPython::Holster( int skiplocal /* = 0 */ )
 
 void CPython::SecondaryAttack( void )
 {
+#ifdef CLIENT_DLL
+	if ( !bIsMultiplayer() )
+#else
 	if ( !g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		return;
 	}

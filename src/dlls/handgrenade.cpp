@@ -60,7 +60,9 @@ void CHandGrenade::Spawn( )
 	m_iId = WEAPON_HANDGRENADE;
 	SET_MODEL(ENT(pev), "models/w_grenade.mdl");
 
+#ifndef CLIENT_DLL
 	pev->dmg = gSkillData.plrDmgHandGrenade;
+#endif
 
 	m_iDefaultAmmo = HANDGRENADE_DEFAULT_GIVE;
 
@@ -116,7 +118,7 @@ void CHandGrenade::Holster( int skiplocal /* = 0 */ )
 	{
 		// no more grenades!
 		m_pPlayer->pev->weapons &= ~(1<<WEAPON_HANDGRENADE);
-		SetThink( DestroyItem );
+		SetThink( &CHandGrenade::DestroyItem );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 
@@ -157,6 +159,7 @@ void CHandGrenade::WeaponIdle( void )
 		if (flVel > 500)
 			flVel = 500;
 
+#ifndef CLIENT_DLL
 		UTIL_MakeVectors( angThrow );
 
 		Vector vecSrc = m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16;
@@ -169,6 +172,7 @@ void CHandGrenade::WeaponIdle( void )
 			time = 0;
 
 		CGrenade::ShootTimed( m_pPlayer->pev, vecSrc, vecThrow, time );
+#endif
 
 		if (flVel < 500)
 		{

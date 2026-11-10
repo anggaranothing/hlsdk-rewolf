@@ -174,7 +174,11 @@ void CMP5::PrimaryAttack()
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	
-	if ( g_pGameRules->IsDeathmatch() )
+#ifdef CLIENT_DLL
+	if ( !bIsMultiplayer() )
+#else
+	if ( !g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		// optimized multiplayer. Widened to make it easier to hit a moving player
 		m_pPlayer->FireBullets( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 2 );
@@ -238,12 +242,14 @@ void CMP5::SecondaryAttack( void )
 		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/glauncher2.wav", 0.8, ATTN_NORM);
 	}
  
+#ifndef CLIENT_DLL
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle );
 
 	// we don't add in player velocity anymore.
 	CGrenade::ShootContact( m_pPlayer->pev, 
 							m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16, 
 							gpGlobals->v_forward * 800 );
+#endif
 	
 	m_flNextPrimaryAttack = gpGlobals->time + 1;
 	m_flNextSecondaryAttack = gpGlobals->time + 1;

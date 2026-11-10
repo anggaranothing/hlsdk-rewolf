@@ -40,6 +40,8 @@ enum squeak_e {
 	SQUEAK_THROW
 };
 
+#ifndef CLIENT_DLL
+
 class CSqueakGrenade : public CGrenade
 {
 	void Spawn( void );
@@ -118,8 +120,8 @@ void CSqueakGrenade :: Spawn( void )
 	UTIL_SetSize(pev, Vector( -4, -4, 0), Vector(4, 4, 8));
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetTouch( SuperBounceTouch );
-	SetThink( HuntThink );
+	SetTouch( &CSqueakGrenade::SuperBounceTouch );
+	SetThink( &CSqueakGrenade::HuntThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	m_flNextHunt = gpGlobals->time + 1E6;
 
@@ -160,7 +162,7 @@ void CSqueakGrenade::Precache( void )
 void CSqueakGrenade :: Killed( entvars_t *pevAttacker, int iGib )
 {
 	pev->model = iStringNull;// make invisible
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	SetTouch( NULL );
 	pev->nextthink = gpGlobals->time + 0.1;
 
@@ -405,6 +407,7 @@ void CSqueakGrenade::SuperBounceTouch( CBaseEntity *pOther )
 	m_flNextBounceSoundTime = gpGlobals->time + 0.5;// half second.
 }
 
+#endif
 
 
 class CSqueak : public CBasePlayerWeapon
@@ -494,7 +497,7 @@ void CSqueak::Holster( int skiplocal /* = 0 */ )
 	if (!m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType])
 	{
 		m_pPlayer->pev->weapons &= ~(1<<WEAPON_SNARK);
-		SetThink( DestroyItem );
+		SetThink( &CSqueak::DestroyItem );
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
 	}
@@ -530,9 +533,11 @@ void CSqueak::PrimaryAttack()
 			// player "shoot" animation
 			m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
+#ifndef CLIENT_DLL
 			CBaseEntity *pSqueak = CBaseEntity::Create( "monster_snark", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict() );
 
 			pSqueak->pev->velocity = gpGlobals->v_forward * 200 + m_pPlayer->pev->velocity;
+#endif
 
 			// play hunt sound
 			float flRndSound = RANDOM_FLOAT ( 0 , 1 );

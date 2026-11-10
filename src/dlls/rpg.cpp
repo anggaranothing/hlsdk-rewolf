@@ -38,6 +38,7 @@ enum rpg_e {
 };
 
 
+#ifndef CLIENT_DLL
 class CLaserSpot : public CBaseEntity
 {
 	void Spawn( void );
@@ -52,14 +53,17 @@ public:
 	static CLaserSpot *CreateSpot( void );
 };
 LINK_ENTITY_TO_CLASS( laser_spot, CLaserSpot );
+#endif
 
 
 class CRpg : public CBasePlayerWeapon
 {
 public:
+#ifndef CLIENT_DLL
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
+#endif
 
 	void Spawn( void );
 	void Precache( void );
@@ -79,20 +83,25 @@ public:
 	void UpdateSpot( void );
 	BOOL ShouldWeaponIdle( void ) { return TRUE; };
 
+#ifndef CLIENT_DLL
 	CLaserSpot *m_pSpot;
+#endif
 	int m_fSpotActive;
 	int m_cActiveRockets;// how many missiles in flight from this launcher right now?
 
 };
 LINK_ENTITY_TO_CLASS( weapon_rpg, CRpg );
 
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION	CRpg::m_SaveData[] = 
 {
 	DEFINE_FIELD( CRpg, m_fSpotActive, FIELD_INTEGER ),
 	DEFINE_FIELD( CRpg, m_cActiveRockets, FIELD_INTEGER ),
 };
 IMPLEMENT_SAVERESTORE( CRpg, CBasePlayerWeapon );
+#endif
 
+#ifndef CLIENT_DLL
 //=========================================================
 //=========================================================
 CLaserSpot *CLaserSpot::CreateSpot( void )
@@ -128,7 +137,7 @@ void CLaserSpot::Suspend( float flSuspendTime )
 {
 	pev->effects |= EF_NODRAW;
 	
-	SetThink( Revive );
+	SetThink( &CLaserSpot::Revive );
 	pev->nextthink = gpGlobals->time + flSuspendTime;
 }
 
@@ -186,7 +195,7 @@ CRpgRocket *CRpgRocket::CreateRpgRocket( Vector vecOrigin, Vector vecAngles, CBa
 	UTIL_SetOrigin( pRocket->pev, vecOrigin );
 	pRocket->pev->angles = vecAngles;
 	pRocket->Spawn();
-	pRocket->SetTouch( CRpgRocket::RocketTouch );
+	pRocket->SetTouch( &CRpgRocket::RocketTouch );
 	pRocket->m_pLauncher = pLauncher;// remember what RPG fired me. 
 	pRocket->m_pLauncher->m_cActiveRockets++;// register this missile as active for the launcher
 	pRocket->pev->owner = pOwner->edict();
@@ -209,8 +218,8 @@ void CRpgRocket :: Spawn( void )
 
 	pev->classname = MAKE_STRING("rpg_rocket");
 
-	SetThink( IgniteThink );
-	SetTouch( ExplodeTouch );
+	SetThink( &CRpgRocket::IgniteThink );
+	SetTouch( &CRpgRocket::ExplodeTouch );
 
 	pev->angles.x -= 30;
 	UTIL_MakeVectors( pev->angles );
@@ -290,7 +299,7 @@ void CRpgRocket :: IgniteThink( void  )
 	m_flIgniteTime = gpGlobals->time;
 
 	// set to follow laser spot
-	SetThink( FollowThink );
+	SetThink(&CRpgRocket::FollowThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -368,6 +377,7 @@ void CRpgRocket :: FollowThink( void  )
 
 	pev->nextthink = gpGlobals->time + 0.1;
 }
+#endif
 
 
 
@@ -405,11 +415,13 @@ void CRpg::Reload( void )
 		return;
 	}
 
+#ifndef CLIENT_DLL
 	if (m_pSpot && m_fSpotActive)
 	{
 		m_pSpot->Suspend( 2.1 );
 		m_flNextSecondaryAttack = gpGlobals->time + 2.1;
 	}
+#endif
 
 	if (m_iClip == 0)
 	{
@@ -430,7 +442,11 @@ void CRpg::Spawn( )
 	SET_MODEL(ENT(pev), "models/w_rpg.mdl");
 	m_fSpotActive = 1;
 
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		// more default ammo in multiplay. 
 		m_iDefaultAmmo = RPG_DEFAULT_GIVE * 2;
@@ -518,11 +534,14 @@ void CRpg::Holster( int skiplocal /* = 0 */ )
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 	// m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );
 	SendWeaponAnim( RPG_HOLSTER1 );
+#ifndef CLIENT_DLL
 	if (m_pSpot)
 	{
 		m_pSpot->Killed( NULL, GIB_NEVER );
 		m_pSpot = NULL;
 	}
+#endif
+
 }
 
 
@@ -536,6 +555,8 @@ void CRpg::PrimaryAttack()
 
 		SendWeaponAnim( RPG_FIRE2 );
 
+#ifndef CLIENT_DLL
+
 		// player "shoot" animation
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
@@ -546,6 +567,7 @@ void CRpg::PrimaryAttack()
 
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );// RpgRocket::Create stomps on globals, so remake.
 		pRocket->pev->velocity = pRocket->pev->velocity + gpGlobals->v_forward * DotProduct( m_pPlayer->pev->velocity, gpGlobals->v_forward );
+#endif
 
 		// firing RPG no longer turns on the designator. ALT fire is a toggle switch for the LTD.
 		// Ken signed up for this as a global change (sjb)
@@ -573,11 +595,13 @@ void CRpg::SecondaryAttack()
 {
 	m_fSpotActive = ! m_fSpotActive;
 
+#ifndef CLIENT_DLL
 	if (!m_fSpotActive && m_pSpot)
 	{
 		m_pSpot->Killed( NULL, GIB_NORMAL );
 		m_pSpot = NULL;
 	}
+#endif
 
 	m_flNextSecondaryAttack = gpGlobals->time + 0.2;
 }
@@ -627,6 +651,8 @@ void CRpg::WeaponIdle( void )
 
 void CRpg::UpdateSpot( void )
 {
+
+#ifndef CLIENT_DLL
 	if (m_fSpotActive)
 	{
 		if (!m_pSpot)
@@ -652,6 +678,8 @@ void CRpg::UpdateSpot( void )
 
 		UTIL_SetOrigin( m_pSpot->pev, tr.vecEndPos );
 	}
+#endif
+
 }
 
 
@@ -672,7 +700,11 @@ class CRpgAmmo : public CBasePlayerAmmo
 	{ 
 		int iGive;
 
-		if ( g_pGameRules->IsMultiplayer() )
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
+	if ( g_pGameRules->IsMultiplayer() )
+#endif
 		{
 			// hand out more ammo per rocket in multiplayer.
 			iGive = AMMO_RPGCLIP_GIVE * 2;

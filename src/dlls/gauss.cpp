@@ -44,9 +44,11 @@ enum gauss_e {
 class CGauss : public CBasePlayerWeapon
 {
 public:
+#ifndef CLIENT_DLL
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
+#endif
 
 	void Spawn( void );
 	void Precache( void );
@@ -85,6 +87,7 @@ private:
 LINK_ENTITY_TO_CLASS( weapon_gauss, CGauss );
 
 
+#ifndef CLIENT_DLL
 TYPEDESCRIPTION	CGauss::m_SaveData[] = 
 {
 	DEFINE_FIELD( CGauss, m_fInAttack, FIELD_INTEGER ),
@@ -94,11 +97,16 @@ TYPEDESCRIPTION	CGauss::m_SaveData[] =
 	DEFINE_FIELD( CGauss, m_fPrimaryFire, FIELD_BOOLEAN ),
 };
 IMPLEMENT_SAVERESTORE( CGauss, CBasePlayerWeapon );
+#endif
 
 
 float CGauss::GetFullChargeTime( void )
 {
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
 	if ( g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		return 1.5;
 	}
@@ -284,7 +292,11 @@ void CGauss::SecondaryAttack()
 		// during the charging process, eat one bit of ammo every once in a while
 		if ( gpGlobals->time > m_flNextAmmoBurn && m_flNextAmmoBurn != -1 )
 		{
-			if ( g_pGameRules->IsMultiplayer() )
+#ifdef CLIENT_DLL
+	if ( bIsMultiplayer() )
+#else
+	if ( g_pGameRules->IsMultiplayer() )
+#endif
 			{
 				m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 				m_flNextAmmoBurn = gpGlobals->time + 0.1;
@@ -327,9 +339,12 @@ void CGauss::SecondaryAttack()
 			m_fInAttack = 0;
 			m_flTimeWeaponIdle = gpGlobals->time + 1.0;
 			m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0;
+				
+#ifndef CLIENT_DLL
 			m_pPlayer->TakeDamage( VARS(eoNullEntity), VARS(eoNullEntity), 50, DMG_SHOCK );
 	
 			UTIL_ScreenFade( m_pPlayer, Vector(255,128,0), 2, 0.5, 128, FFADE_IN );
+#endif
 			SendWeaponAnim( GAUSS_IDLE );
 			
 			// Player may have been killed and this weapon dropped, don't execute any more code after this!
@@ -364,13 +379,18 @@ void CGauss::StartFire( void )
 	if ( m_fPrimaryFire )
 	{
 		// fixed damage on primary attack
+#ifdef CLIENT_DLL
+		flDamage = 20;
+#else 
 		flDamage = gSkillData.plrDmgGauss;
+#endif
 	}
 
 	if (m_fInAttack != 3)
 	{
 		//ALERT ( at_console, "Time:%f Damage:%f\n", gpGlobals->time - m_flStartCharge, flDamage );
 
+#ifndef CLIENT_DLL
 		float flZVel = m_pPlayer->pev->velocity.z;
 
 		if ( !m_fPrimaryFire )
@@ -383,7 +403,7 @@ void CGauss::StartFire( void )
 			// in deathmatch, gauss can pop you up into the air. Not in single play.
 			m_pPlayer->pev->velocity.z = flZVel;
 		}
-
+#endif
 		// player "shoot" animation
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 	}
@@ -420,6 +440,7 @@ void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 
 	// ALERT( at_console, "%f %f\n", tr.flFraction, flMaxFrac );
 
+#ifndef CLIENT_DLL
 	while (flDamage > 10 && nMaxHits > 0)
 	{
 		nMaxHits--;
@@ -542,6 +563,7 @@ void CGauss::Fire( Vector vecOrigSrc, Vector vecDir, float flDamage )
 			pentIgnore = ENT( pEntity->pev );
 		}
 	}
+#endif
 	// ALERT( at_console, "%d bytes\n", nTotal );
 }
 

@@ -262,7 +262,7 @@ CommandButton *CCommandMenu::FindButtonWithSubmenu( CCommandMenu *pSubMenu )
 // Recalculate the visible buttons
 bool CCommandMenu::RecalculateVisibles( int iNewYPos, bool bHideAll )
 {
-	int  iCurrentY = 0;
+	int  i, iCurrentY = 0;
 	int  iXPos, iYPos;
 	bool bHasButton = false;
 
@@ -270,7 +270,7 @@ bool CCommandMenu::RecalculateVisibles( int iNewYPos, bool bHideAll )
 		setPos( _pos[0], iNewYPos );
 
 	// Cycle through all the buttons in this menu, and see which will be visible
-	for (int i = 0; i < m_iButtons; i++)
+	for (i = 0; i < m_iButtons; i++)
 	{
 		int iClass = m_aButtons[i]->GetPlayerClass();
 		if ( (iClass && iClass != g_iPlayerClass ) || ( m_aButtons[i]->IsNotValid() ) || bHideAll )
@@ -2058,7 +2058,8 @@ int TeamFortressViewport::MsgFunc_TeamScore( const char *pszName, int iSize, voi
 	char *TeamName = READ_STRING();
 
 	// find the team matching the name
-	for ( int i = 1; i <= m_pScoreBoard->m_iNumTeams; i++ )
+	int i;
+	for ( i = 1; i <= m_pScoreBoard->m_iNumTeams; i++ )
 	{
 		if ( !stricmp( TeamName, g_TeamInfo[i].name ) )
 			break;

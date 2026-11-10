@@ -23,6 +23,7 @@
 #include "player.h"
 #include "gamerules.h"
 
+#ifndef CLIENT_DLL
 #define BOLT_AIR_VELOCITY	2000
 #define BOLT_WATER_VELOCITY	1000
 
@@ -70,8 +71,8 @@ void CCrossbowBolt::Spawn( )
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 
-	SetTouch( BoltTouch );
-	SetThink( BubbleThink );
+	SetTouch( &CCrossbowBolt::BoltTouch );
+	SetThink(&CCrossbowBolt::BubbleThink );
 	pev->nextthink = gpGlobals->time + 0.2;
 }
 
@@ -138,7 +139,7 @@ void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
 	{
 		EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "weapons/xbow_hit1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM, 0, 98 + RANDOM_LONG(0,7));
 
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		pev->nextthink = gpGlobals->time;// this will get changed below if the bolt is allowed to stick in what it hit.
 
 		if ( FClassnameIs( pOther->pev, "worldspawn" ) )
@@ -163,7 +164,7 @@ void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
 
 	if ( g_pGameRules->IsMultiplayer() )
 	{
-		SetThink( ExplodeThink );
+		SetThink(&CCrossbowBolt::ExplodeThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
@@ -217,7 +218,7 @@ void CCrossbowBolt::ExplodeThink( void )
 
 	UTIL_Remove(this);
 }
-
+#endif
 
 enum crossbow_e {
 	CROSSBOW_IDLE1 = 0,	// full
@@ -335,7 +336,12 @@ void CCrossbow::Holster( int skiplocal /* = 0 */ )
 
 void CCrossbow::PrimaryAttack( void )
 {
+
+#ifdef CLIENT_DLL
+	if ( m_fInZoom && bIsMultiplayer() )
+#else
 	if ( m_fInZoom && g_pGameRules->IsMultiplayer() )
+#endif
 	{
 		FireSniperBolt();
 		return;
@@ -383,6 +389,7 @@ void CCrossbow::FireSniperBolt()
 
 	UTIL_TraceLine(vecSrc, vecSrc + vecDir * 8192, dont_ignore_monsters, m_pPlayer->edict(), &tr);
 
+#ifndef CLIENT_DLL
 	if ( tr.pHit->v.takedamage )
 	{
 		switch( RANDOM_LONG(0,1) )
@@ -405,7 +412,7 @@ void CCrossbow::FireSniperBolt()
 		pBolt->pev->angles = UTIL_VecToAngles( vecDir );
 		pBolt->pev->solid = SOLID_NOT;
 		pBolt->SetTouch( NULL );
-		pBolt->SetThink( SUB_Remove );
+		pBolt->SetThink( &CBaseEntity::SUB_Remove );
 
 		EMIT_SOUND( pBolt->edict(), CHAN_WEAPON, "weapons/xbow_hit1.wav", RANDOM_FLOAT(0.95, 1.0), ATTN_NORM );
 
@@ -424,6 +431,7 @@ void CCrossbow::FireSniperBolt()
 			pBolt->pev->nextthink = gpGlobals->time;
 		}
 	}
+#endif
 }
 
 void CCrossbow::FireBolt()
@@ -465,6 +473,7 @@ void CCrossbow::FireBolt()
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( ) - gpGlobals->v_up * 2;
 	Vector vecDir	 = gpGlobals->v_forward;
 
+#ifndef CLIENT_DLL
 	//CBaseEntity *pBolt = CBaseEntity::Create( "crossbow_bolt", vecSrc, anglesAim, m_pPlayer->edict() );
 	CCrossbowBolt *pBolt = CCrossbowBolt::BoltCreate();
 	pBolt->pev->origin = vecSrc;
@@ -482,6 +491,7 @@ void CCrossbow::FireBolt()
 		pBolt->pev->speed = BOLT_AIR_VELOCITY;
 	}
 	pBolt->pev->avelocity.z = 10;
+#endif
 
 	if (!m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0)
 		// HEV suit - indicate out of ammo condition

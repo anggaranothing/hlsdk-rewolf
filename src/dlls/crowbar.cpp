@@ -162,7 +162,7 @@ void CCrowbar::PrimaryAttack()
 {
 	if (! Swing( 1 ))
 	{
-		SetThink( SwingAgain );
+		SetThink(&CCrowbar::SwingAgain );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
@@ -192,6 +192,7 @@ int CCrowbar::Swing( int fFirst )
 
 	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 
+#ifndef CLIENT_DLL
 	if ( tr.flFraction >= 1.0 )
 	{
 		UTIL_TraceHull( vecSrc, vecEnd, dont_ignore_monsters, head_hull, ENT( m_pPlayer->pev ), &tr );
@@ -205,6 +206,7 @@ int CCrowbar::Swing( int fFirst )
 			vecEnd = tr.vecEndPos;	// This is the point on the actual surface (the hull could have hit space)
 		}
 	}
+#endif	
 
 	if ( tr.flFraction >= 1.0 )
 	{
@@ -247,6 +249,8 @@ int CCrowbar::Swing( int fFirst )
 
 		// player "shoot" animation
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+		
+#ifndef CLIENT_DLL
 
 		ClearMultiDamage( );
 		if ( (m_flNextPrimaryAttack + 1 < gpGlobals->time) || g_pGameRules->IsMultiplayer() )
@@ -322,10 +326,11 @@ int CCrowbar::Swing( int fFirst )
 
 		// delay the decal a bit
 		m_trHit = tr;
-		SetThink( Smack );
+		SetThink(&CCrowbar::Smack);
 		pev->nextthink = gpGlobals->time + 0.2;
 
 		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;
+#endif
 	}
 	return fDidHit;
 }
