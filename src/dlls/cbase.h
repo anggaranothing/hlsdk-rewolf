@@ -198,7 +198,7 @@ public:
 	virtual const char *TeamID( void ) { return ""; }
 
 
-	virtual void	SetActivator( CBaseEntity *pActivator ) {} // !!! UNUSED !!! but somehow GC has it.
+	virtual void unused_42( void ) {} // !!! UNUSED !!! but somehow GC has it.
 	virtual CBaseEntity *GetNextTarget( void );
 	
 	// fundamental callbacks
