@@ -347,8 +347,8 @@ public:
 
 	virtual int Illumination( ) { return GETENTITYILLUM( ENT( pev ) ); };
 
+	virtual	BOOL FVisible(const Vector& vecOrigin);
 	virtual	BOOL FVisible ( CBaseEntity *pEntity );
-	virtual	BOOL FVisible ( const Vector &vecOrigin );
 };
 
 
