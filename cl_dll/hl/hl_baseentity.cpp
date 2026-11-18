@@ -391,8 +391,13 @@ BOOL CBasePlayer::HasNamedPlayerItem( const char *pszItemName ) { return FALSE; 
 void CBaseMonster :: Precache( void ) { }
 void CGrenade::BounceTouch( CBaseEntity *pOther ) { }
 CBaseEntity * EHANDLE :: operator = (CBaseEntity *pEntity) { return NULL; }
+#ifdef GUNMAN_VC6
 EHANDLE :: operator int ( ) { }	// sic: no return value (retail's is a bare ret)
 EHANDLE :: operator CBaseEntity *() { }	// sic: no return value either (retail calls a bare ret)
+#else
+EHANDLE :: operator int() { return 0; }
+EHANDLE :: operator CBaseEntity* () { return NULL; }
+#endif
 CBaseEntity * EHANDLE :: operator -> () { return NULL; }
 void CSprite::AnimateUntilDead( void ) { }
 void CBeam::RelinkBeam( void ) { }

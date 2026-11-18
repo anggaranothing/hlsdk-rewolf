@@ -39,7 +39,10 @@
 #define NOSERVICE
 #define NOMCX
 #define NOIME
+
+#include "winsani_in.h"
 #include "WINDOWS.H"
+#include "winsani_out.h"
  
 // Misc C-runtime library headers
 #include "STDIO.H"

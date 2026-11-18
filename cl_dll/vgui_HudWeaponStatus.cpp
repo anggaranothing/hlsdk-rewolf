@@ -85,7 +85,7 @@ CWeaponStatusPanel::CWeaponStatusPanel( int iTrans, int iRemoveMe, int x, int y,
 		m_pIcons[i] = LoadTGA( sHistoryIcons[i] );
 
 	// from the bottom up
-	for ( i = 0; i < m_iMaxItems; i++ )
+	for ( int i = 0; i < m_iMaxItems; i++ )
 	{
 		m_Items[i].pLabel = new CImageLabel( m_pIcons[0], 0, m_iTall - 35 * ( i + 1 ), 64, 32 );
 		m_Items[i].pLabel->setParent( this );

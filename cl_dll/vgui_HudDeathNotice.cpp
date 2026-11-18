@@ -70,7 +70,7 @@ CDeathNoticePanel::CDeathNoticePanel( int iTrans, int iRemoveMe, int x, int y, i
 
 	SchemeHandle_t hTextScheme = pSchemes->getSchemeHandle( "Death Notice Text" );
 
-	for ( i = 0; i < m_iMaxLines; i++ )
+	for ( int i = 0; i < m_iMaxLines; i++ )
 	{
 		m_Notices[i].pIcon = new CImageLabel( m_pIcons[0], 0, i * 36, 64, 32 );
 		m_Notices[i].pIcon->setParent( this );
