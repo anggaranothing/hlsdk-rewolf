@@ -14,20 +14,14 @@
     {
       "name": "x86-Release",
       "generator": "Ninja",
-      "configurationType": "RelWithDebInfo",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x86" ],
-      "variables": [
-        {
-          "name": "CMAKE_BUILD_TYPE",
-          "value": "Release",
-          "type": "STRING"
-        }
-      ]
+      "variables": []
     }
   ]
 }
