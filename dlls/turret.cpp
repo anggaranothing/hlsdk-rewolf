@@ -259,7 +259,7 @@ void CBaseTurret::Spawn()
 	pev->takedamage		= DAMAGE_AIM;
 
 	SetBits (pev->flags, FL_MONSTER);
-	SetUse( TurretUse );
+	SetUse( &CBaseTurret::TurretUse );
 
 	if (( pev->spawnflags & SF_MONSTER_TURRET_AUTOACTIVATE ) 
 		 && !( pev->spawnflags & SF_MONSTER_TURRET_STARTINACTIVE ))
@@ -311,7 +311,7 @@ void CTurret::Spawn()
 	m_iMinPitch	= -15;
 	UTIL_SetSize(pev, Vector(-32, -32, -m_iRetractHeight), Vector(32, 32, m_iRetractHeight));
 	
-	SetThink(Initialize);	
+	SetThink(&CBaseTurret::Initialize);	
 
 	m_pEyeGlow = CSprite::SpriteCreate( TURRET_GLOW_SPRITE, pev->origin, FALSE );
 	m_pEyeGlow->SetTransparency( kRenderGlow, 255, 0, 0, 0, kRenderFxNoDissipation );
@@ -343,7 +343,7 @@ void CMiniTurret::Spawn()
 	m_iMinPitch	= -15;
 	UTIL_SetSize(pev, Vector(-16, -16, -m_iRetractHeight), Vector(16, 16, m_iRetractHeight));
 
-	SetThink(Initialize);	
+	SetThink(&CBaseTurret::Initialize);	
 	pev->nextthink = gpGlobals->time + 0.3; 
 }
 
@@ -384,11 +384,11 @@ void CBaseTurret::Initialize(void)
 	if (m_iAutoStart)
 	{
 		m_flLastSight = gpGlobals->time + m_flMaxWait;
-		SetThink(AutoSearchThink);		
+		SetThink(&CBaseTurret::AutoSearchThink);		
 		pev->nextthink = gpGlobals->time + .1;
 	}
 	else
-		SetThink(SUB_DoNothing);
+		SetThink(&CBaseEntity::SUB_DoNothing);
 }
 
 void CBaseTurret::TurretUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -402,7 +402,7 @@ void CBaseTurret::TurretUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		pev->nextthink = gpGlobals->time + 0.1;
 		m_iAutoStart = FALSE;// switching off a turret disables autostart
 		//!!!! this should spin down first!!BUGBUG
-		SetThink(Retire);
+		SetThink(&CBaseTurret::Retire);
 	}
 	else 
 	{
@@ -414,7 +414,7 @@ void CBaseTurret::TurretUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 			m_iAutoStart = TRUE;
 		}
 		
-		SetThink(Deploy);
+		SetThink(&CBaseTurret::Deploy);
 	}
 }
 
@@ -474,7 +474,7 @@ void CBaseTurret::ActiveThink(void)
 	{
 		m_hEnemy = NULL;
 		m_flLastSight = gpGlobals->time + m_flMaxWait;
-		SetThink(SearchThink);
+		SetThink(&CBaseTurret::SearchThink);
 		return;
 	}
 	
@@ -491,7 +491,7 @@ void CBaseTurret::ActiveThink(void)
 			{	
 				m_hEnemy = NULL;
 				m_flLastSight = gpGlobals->time + m_flMaxWait;
-				SetThink(SearchThink);
+				SetThink(&CBaseTurret::SearchThink);
 				return;
 			}
 		}
@@ -520,7 +520,7 @@ void CBaseTurret::ActiveThink(void)
 			{
 				m_hEnemy = NULL;
 				m_flLastSight = gpGlobals->time + m_flMaxWait;
-				SetThink(SearchThink);
+				SetThink(&CBaseTurret::SearchThink);
 				return;
 			}
 		}
@@ -674,7 +674,7 @@ void CBaseTurret::Deploy(void)
 
 	SetTurretAnim(TURRET_ANIM_SPIN);
 	pev->framerate = 0;
-	SetThink(SearchThink);
+	SetThink(&CBaseTurret::SearchThink);
 
 	m_flLastSight = gpGlobals->time + m_flMaxWait;
 }
@@ -712,11 +712,11 @@ void CBaseTurret::Retire(void)
 			UTIL_SetSize(pev, pev->mins, pev->maxs);
 			if (m_iAutoStart)
 			{
-				SetThink(AutoSearchThink);		
+				SetThink(&CBaseTurret::AutoSearchThink);		
 				pev->nextthink = gpGlobals->time + .1;
 			}
 			else
-				SetThink(SUB_DoNothing);
+				SetThink(&CBaseEntity::SUB_DoNothing);
 		}
 	}
 	else
@@ -746,7 +746,7 @@ void CTurret::SpinUpCall(void)
 		else if (pev->framerate >= 1.0)
 		{
 			pev->nextthink = gpGlobals->time + 0.1; // retarget delay
-			SetThink(ActiveThink);
+			SetThink(&CBaseTurret::ActiveThink);
 			m_iStartSpin = 0;
 			m_iSpin = 1;
 		} 
@@ -758,7 +758,7 @@ void CTurret::SpinUpCall(void)
 
 	if (m_iSpin)
 	{
-		SetThink(ActiveThink);
+		SetThink(&CBaseTurret::ActiveThink);
 	}
 }
 
@@ -851,7 +851,7 @@ void CBaseTurret::SearchThink(void)
 	{
 		m_flLastSight = 0;
 		m_flSpinUpTime = 0;
-		SetThink(ActiveThink);
+		SetThink(&CBaseTurret::ActiveThink);
 	}
 	else
 	{
@@ -861,7 +861,7 @@ void CBaseTurret::SearchThink(void)
 			//Before we retrace, make sure that we are spun down.
 			m_flLastSight = 0;
 			m_flSpinUpTime = 0;
-			SetThink(Retire);
+			SetThink(&CBaseTurret::Retire);
 		}
 		// should we stop the spin?
 		else if ((m_flSpinUpTime) && (gpGlobals->time > m_flSpinUpTime))
@@ -902,7 +902,7 @@ void CBaseTurret::AutoSearchThink(void)
 
 	if (m_hEnemy != NULL)
 	{
-		SetThink(Deploy);
+		SetThink(&CBaseTurret::Deploy);
 	}
 }
 
@@ -1006,7 +1006,7 @@ int CBaseTurret::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 		ClearBits (pev->flags, FL_MONSTER); // why are they set in the first place???
 
 		SetUse(NULL);
-		SetThink(TurretDeath);
+		SetThink(&CBaseTurret::TurretDeath);
 		SUB_UseTargets( this, USE_ON, 0 ); // wake up others
 		pev->nextthink = gpGlobals->time + 0.1;
 
@@ -1018,7 +1018,7 @@ int CBaseTurret::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 		if (m_iOn && (1 || RANDOM_LONG(0, 0x7FFF) > 800))
 		{
 			m_fBeserk = 1;
-			SetThink(SearchThink);
+			SetThink(&CBaseTurret::SearchThink);
 		}
 	}
 
@@ -1168,8 +1168,8 @@ void CSentry::Spawn()
 	m_iMinPitch	= -60;
 	UTIL_SetSize(pev, Vector(-32, -32, 0), Vector(32, 32, 64));
 
-	SetTouch(SentryTouch);
-	SetThink(Initialize);	
+	SetTouch(&CSentry::SentryTouch);
+	SetThink(&CBaseTurret::Initialize);	
 	m_iBaseTurnRate = 90;
 	pev->nextthink = gpGlobals->time + 0.3; 
 }
@@ -1193,7 +1193,7 @@ int CSentry::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float f
 
 	if (!m_iOn)
 	{
-		SetThink( Deploy );
+		SetThink( &CBaseTurret::Deploy );
 		SetUse( NULL );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
@@ -1208,7 +1208,7 @@ int CSentry::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, float f
 		ClearBits (pev->flags, FL_MONSTER); // why are they set in the first place???
 
 		SetUse(NULL);
-		SetThink(SentryDeath);
+		SetThink(&CSentry::SentryDeath);
 		SUB_UseTargets( this, USE_ON, 0 ); // wake up others
 		pev->nextthink = gpGlobals->time + 0.1;
 
@@ -1348,7 +1348,7 @@ int CSentryMini::TakeDamage(entvars_t *pevInflictor, entvars_t *pevAttacker, flo
 		ClearBits (pev->flags, FL_MONSTER); // why are they set in the first place???
 
 		SetUse(NULL);
-		SetThink(SentryDeath);
+		SetThink(&CSentry::SentryDeath);
 		SUB_UseTargets( this, USE_ON, 0 ); // wake up others
 
 		if ( m_iTriggerCondition == AITRIGGER_DEATH )

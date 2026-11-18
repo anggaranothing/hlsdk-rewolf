@@ -140,30 +140,30 @@ void CMonsterMaker :: Spawn( )
 	{
 		if ( pev->spawnflags & SF_MONSTERMAKER_CYCLIC )
 		{
-			SetUse ( CyclicUse );// drop one monster each time we fire
+			SetUse ( &CMonsterMaker::CyclicUse );// drop one monster each time we fire
 		}
 		else
 		{
-			SetUse ( ToggleUse );// so can be turned on/off
+			SetUse ( &CMonsterMaker::ToggleUse );// so can be turned on/off
 		}
 
 		if ( FBitSet ( pev->spawnflags, SF_MONSTERMAKER_START_ON ) )
 		{// start making monsters as soon as monstermaker spawns
 			pev->nextthink = gpGlobals->time + m_flDelay;
 			m_fActive = TRUE;
-			SetThink ( MakerThink );
+			SetThink ( &CMonsterMaker::MakerThink );
 		}
 		else
 		{// wait to be activated.
 			m_fActive = FALSE;
-			SetThink ( SUB_DoNothing );
+			SetThink ( &CBaseEntity::SUB_DoNothing );
 		}
 	}
 	else
 	{// no targetname, just start.
 			pev->nextthink = gpGlobals->time + m_flDelay;
 			m_fActive = TRUE;
-			SetThink ( MakerThink );
+			SetThink ( &CMonsterMaker::MakerThink );
 	}
 
 	switch ( m_iFadeStatus )
@@ -251,7 +251,7 @@ void CMonsterMaker::MakeMonster( void )
 		ALERT ( at_console, "NULL Ent in MonsterMaker!\n" );
 		ALERT ( at_console, "MAPPER!!  FIX THIS!!\n" );
 		ALERT ( at_console, "PLEASE!!\n" );
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		pev->nextthink = gpGlobals->time;
 		return;
 	}
@@ -324,7 +324,7 @@ void CMonsterMaker::CyclicUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, U
 {
 	if ( FBitSet( pev->spawnflags, SF_MONSTERMAKER_WARPIN ) )
 	{
-		SetThink ( MakerWarpThink );
+		SetThink ( &CMonsterMaker::MakerWarpThink );
 		m_flWarpInTime = gpGlobals->time + 1.67;
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
@@ -349,7 +349,7 @@ void CMonsterMaker :: ToggleUse ( CBaseEntity *pActivator, CBaseEntity *pCaller,
 	else
 	{
 		m_fActive = TRUE;
-		SetThink ( MakerThink );
+		SetThink ( &CMonsterMaker::MakerThink );
 	}
 
 	pev->nextthink = gpGlobals->time;
@@ -362,7 +362,7 @@ void CMonsterMaker :: MakerThink ( void )
 {
 	if ( FBitSet( pev->spawnflags, SF_MONSTERMAKER_WARPIN ) )
 	{
-		SetThink ( MakerWarpThink );
+		SetThink ( &CMonsterMaker::MakerWarpThink );
 		m_flWarpInTime = gpGlobals->time + 1.67;
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
@@ -395,11 +395,11 @@ void CMonsterMaker :: MakerWarpThink ( void )
 
 		if ( pev->spawnflags & SF_MONSTERMAKER_CYCLIC )
 		{
-			SetThink ( SUB_DoNothing );
+			SetThink ( &CBaseEntity::SUB_DoNothing );
 		}
 		else
 		{
-			SetThink ( MakerThink );
+			SetThink ( &CMonsterMaker::MakerThink );
 			pev->nextthink = gpGlobals->time + m_flDelay;
 		}
 		return;

@@ -117,8 +117,8 @@ void CTubeRocket::Spawn( void )
 		WRITE_BYTE( 128 );	// brightness
 	MESSAGE_END( );
 
-	SetTouch( TrackTouch );
-	SetThink( StartTrack );
+	SetTouch( &CTubeRocket::TrackTouch );
+	SetThink( &CTubeRocket::StartTrack );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 	ResetSequenceInfo( );
@@ -158,7 +158,7 @@ void CTubeRocket::StartTrack( void )
 			m_hEnemy = NULL;
 	}
 
-	SetThink( TrackTarget );
+	SetThink( &CTubeRocket::TrackTarget );
 	TrackTarget( );
 }
 
@@ -347,6 +347,6 @@ void CTubeRocket::DieTouch( CBaseEntity *pOther )
 
 	pev->health = 0;
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.2;
 }

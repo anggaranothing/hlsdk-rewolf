@@ -56,7 +56,7 @@ void CClusterGod::Spawn( void )
 
 	SetTouch( NULL );
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( ShootClusterGrenades );
+	SetThink( &CClusterGod::ShootClusterGrenades );
 	pev->health = 20;
 
 	ResetSequenceInfo( );
@@ -106,7 +106,7 @@ void CClusterGod::ShootClusterGrenades( void )
 		SET_MODEL( ENT( pCluster->pev ), "models/artillary.mdl" );
 	}
 
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 5.0;
 }
 
@@ -174,7 +174,7 @@ void CClusterExplosion::Spawn( void )
 
 	SetTouch( NULL );
 	SetThink( NULL );
-	SetUse( ClusterExplode );
+	SetUse( &CClusterExplosion::ClusterExplode );
 
 	UTIL_SetOrigin( pev, pev->origin );
 }

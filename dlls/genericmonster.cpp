@@ -213,14 +213,14 @@ void CFlashlightMonsterBeam :: Spawn( void )
 void CFlashlightMonsterBeam :: SetAdditive( void )
 {
 	pev->rendermode = kRenderTransAdd;
-	SetThink( SetNormal );
+	SetThink( &CFlashlightMonsterBeam::SetNormal );
 	pev->nextthink = gpGlobals->time + 2.0;
 }
 
 void CFlashlightMonsterBeam :: SetNormal( void )
 {
 	pev->rendermode = kRenderNormal;
-	SetThink( SetAdditive );
+	SetThink( &CFlashlightMonsterBeam::SetAdditive );
 	pev->nextthink = gpGlobals->time + 2.0;
 }
 

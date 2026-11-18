@@ -105,8 +105,8 @@ void CBaseBird :: Spawn( void )
 
 	InitBoneControllers();
 
-	SetThink( HuntThink );
-	SetTouch( FlyTouch );
+	SetThink( &CBaseBird::HuntThink );
+	SetTouch( &CBaseBird::FlyTouch );
 	pev->nextthink = gpGlobals->time + 1.0;
 
 	m_tNextFlap = m_tNextCry = gpGlobals->time;
@@ -122,8 +122,8 @@ void CBaseBird::NullThink( void )
 
 void CBaseBird::StartupUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	SetThink( HuntThink );
-	SetTouch( FlyTouch );
+	SetThink( &CBaseBird::HuntThink );
+	SetTouch( &CBaseBird::FlyTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
 	SetUse( NULL );
 }
@@ -135,8 +135,8 @@ void CBaseBird :: Killed( entvars_t *pevAttacker, int iGib )
 
 	SetSequenceByName( "falling" );
 
-	SetThink( DyingThink );
-	SetTouch( CrashTouch );
+	SetThink( &CBaseBird::DyingThink );
+	SetTouch( &CBaseBird::CrashTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->health = 0;
 	pev->takedamage = DAMAGE_NO;

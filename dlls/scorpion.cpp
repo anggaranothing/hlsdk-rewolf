@@ -376,7 +376,7 @@ void CScorpion::Spawn( void )
 	if ( !pev->skin )
 		pev->skin = m_iSkin;
 
-	SetTouch( SquashTouch );
+	SetTouch( &CScorpion::SquashTouch );
 
 	MonsterInit();
 

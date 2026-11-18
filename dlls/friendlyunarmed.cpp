@@ -168,7 +168,7 @@ void CFriendlyUnarmed :: Spawn()
 		SetBodygroup( 1, 0 );
 	SetBodygroup( 2, 0 );
 
-	SetUse( FollowerUse );
+	SetUse( &CFriendlyUnarmed::FollowerUse );
 }
 
 //=========================================================

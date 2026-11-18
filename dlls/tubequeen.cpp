@@ -122,9 +122,9 @@ void CTubeMortar::Spawn( void )
 	pev->health = 1;
 
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetTouch( DecoreTouch );
+	SetTouch( &CTubeMortar::DecoreTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( MortarThink );
+	SetThink( &CTubeMortar::MortarThink );
 
 	SetSequenceByName( "wiggle" );
 	ResetSequenceInfo( );
@@ -222,7 +222,7 @@ void CTubeMortar::DecoreTouch( CBaseEntity *pOther )
 	MESSAGE_END( );
 
 	pev->health = -1;
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -720,7 +720,7 @@ void CTubeQueen::Spawn( void )
 
 	MonsterInit( );
 
-	SetUse( UseQueen );
+	SetUse( &CTubeQueen::UseQueen );
 	m_afCapability |= bits_CAP_RANGE_ATTACK1;
 }
 

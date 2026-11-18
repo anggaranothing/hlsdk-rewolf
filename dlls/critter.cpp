@@ -90,7 +90,7 @@ void CCritterGib::Spawn( void )
 	pev->movetype = MOVETYPE_NOCLIP;
 	pev->effects = 0;
 	pev->takedamage = DAMAGE_NO;
-	SetThink( FlopAnim );
+	SetThink( &CCritterGib::FlopAnim );
 	SetSequenceByName( "flop" );
 	SetTouch( NULL );
 	SetUse( NULL );

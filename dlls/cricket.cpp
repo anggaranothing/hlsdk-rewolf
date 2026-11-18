@@ -233,7 +233,7 @@ void CCricket::Spawn( void )
 
 	MonsterInit();
 
-	SetTouch( SquashTouch );
+	SetTouch( &CCricket::SquashTouch );
 }
 
 //=========================================================

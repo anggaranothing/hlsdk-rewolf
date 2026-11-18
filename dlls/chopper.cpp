@@ -152,8 +152,8 @@ void CChopper :: Spawn( void )
 
 	InitBoneControllers();
 
-	SetThink( HuntThink );
-	SetTouch( FlyTouch );
+	SetThink( &CChopper::HuntThink );
+	SetTouch( &CChopper::FlyTouch );
 	pev->nextthink = gpGlobals->time + 1.0;
 
 	ResetStrafe( );
@@ -188,8 +188,8 @@ void CChopper :: Killed( entvars_t *pevAttacker, int iGib )
 	STOP_SOUND( ENT(pev), CHAN_STATIC, "apache/ap_rotor2.wav" );
 
 	UTIL_SetSize( pev, Vector( -32, -32, -64), Vector( 32, 32, 0) );
-	SetThink( FallingThink );
-	SetTouch( CrashTouch );
+	SetThink( &CChopper::FallingThink );
+	SetTouch( &CChopper::CrashTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->health = 0;
 	pev->takedamage = DAMAGE_NO;
@@ -373,7 +373,7 @@ void CChopper::CrashTouch( CBaseEntity *pOther )
 	UTIL_EmitAmbientSound( ENT(pev), pev->origin, "weapons/explode5.wav", 1, ATTN_NONE, 0, 120 );
 
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -783,9 +783,9 @@ void CMantaShip :: Spawn( void )
 {
 	CChopper::Spawn( );
 
-	SetThink( MantaThink );
+	SetThink( &CMantaShip::MantaThink );
 	pev->takedamage = DAMAGE_NO;
-	SetUse( DropBomb );
+	SetUse( &CMantaShip::DropBomb );
 
 	SET_MODEL(ENT(pev), "models/mantadock.mdl");
 	UTIL_SetSize( pev, Vector( -96, -96, 0 ), Vector( 96, 96, 96 ) );
@@ -1083,8 +1083,8 @@ void CMantaBomb :: Spawn( void )
 
 	SET_MODEL( ENT(pev), "models/chopperbomb.mdl" );
 
-	SetThink( TumbleThink );
-	SetTouch( MantaBombTouch );
+	SetThink( &CMantaBomb::TumbleThink );
+	SetTouch( &CMantaBomb::MantaBombTouch );
 
 	pev->takedamage = DAMAGE_NO;
 	pev->gravity = 1.0;

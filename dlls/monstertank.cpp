@@ -99,7 +99,7 @@ CMonsterTankRocket *CMonsterTankRocket::Create( Vector vecOrigin, Vector vecAngl
 	pRocket->pev->angles = vecAngles;
 	pRocket->m_hEnemy = pEnemy;
 	pRocket->Spawn();
-	pRocket->SetTouch( RocketTouch );
+	pRocket->SetTouch( &CMonsterTankRocket::RocketTouch );
 	if ( pOwner )
 		pRocket->pev->owner = pOwner->edict();
 	pRocket->pev->dmg = flDamage;
@@ -166,7 +166,7 @@ void CMonsterTankRocket::Spawn( void )
 	pev->movetype = MOVETYPE_FLY;
 	EMIT_SOUND( ENT( pev ), CHAN_VOICE, "ambience/flameburst1.wav", 1, 0.5 );
 
-	SetThink( RocketThink );
+	SetThink( &CMonsterTankRocket::RocketThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -184,7 +184,7 @@ void CMonsterTankRocket::RocketTouch( CBaseEntity *pOther )
 				UTIL_Remove( m_pFlame );
 				m_pFlame = NULL;
 			}
-			SetThink( SUB_Remove );
+			SetThink( &CBaseEntity::SUB_Remove );
 		}
 		else
 		{
@@ -257,7 +257,7 @@ void CMonsterTankRocket::RocketTouch( CBaseEntity *pOther )
 			for ( int i = 0; i < 30; i++ )
 			{
 				Vector vecTracer = gpGlobals->v_forward * RANDOM_FLOAT( -600, 600 ) + gpGlobals->v_right * RANDOM_FLOAT( -600, 600 ) + gpGlobals->v_up * RANDOM_FLOAT( -600, 600 );
-				if ( abs( (int)vecTracer.Length() ) >= 100 )
+				if ( fabs( (int)vecTracer.Length() ) >= 100 )
 				{
 					MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
 						WRITE_BYTE( TE_USERTRACER );
@@ -274,7 +274,7 @@ void CMonsterTankRocket::RocketTouch( CBaseEntity *pOther )
 				}
 			}
 
-			SetThink( RocketSmokeThink );
+			SetThink( &CMonsterTankRocket::RocketSmokeThink );
 		}
 
 		pev->nextthink = gpGlobals->time;

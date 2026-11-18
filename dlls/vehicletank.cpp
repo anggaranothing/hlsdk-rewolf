@@ -155,7 +155,7 @@ void CVehicleTank::Spawn( void )
 	UTIL_SetOrigin( pev, pev->origin );
 
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( BuildVehicleThink );
+	SetThink( &CVehicleTank::BuildVehicleThink );
 
 	m_pPlayer = NULL;
 	m_pBarrelBSP = NULL;
@@ -259,8 +259,8 @@ void CVehicleTank::BuildVehicleThink( void )
 		if ( !m_pPlayer )
 		{
 			m_pPlayer = NULL;
-			SetThink( WithoutPlayerThink );
-			SetUse( UseVehicle );
+			SetThink( &CVehicleTank::WithoutPlayerThink );
+			SetUse( &CVehicleTank::UseVehicle );
 		}
 		else
 		{
@@ -268,13 +268,13 @@ void CVehicleTank::BuildVehicleThink( void )
 			if ( m_pPlayer )
 			{
 				m_pPlayer->m_pVehicle = this;
-				SetThink( WithPlayerThink );
+				SetThink( &CVehicleTank::WithPlayerThink );
 				SetUse( NULL );
 			}
 			else
 			{
-				SetThink( WithoutPlayerThink );
-				SetUse( UseVehicle );
+				SetThink( &CVehicleTank::WithoutPlayerThink );
+				SetUse( &CVehicleTank::UseVehicle );
 			}
 		}
 
@@ -309,7 +309,7 @@ void CVehicleTank::WithoutPlayerThink( void )
 
 	if ( !m_pBodyBSP )
 	{
-		SetThink( BuildVehicleThink );
+		SetThink( &CVehicleTank::BuildVehicleThink );
 		return;
 	}
 
@@ -363,7 +363,7 @@ void CVehicleTank::WithPlayerThink( void )
 
 	if ( !m_pBodyBSP )
 	{
-		SetThink( BuildVehicleThink );
+		SetThink( &CVehicleTank::BuildVehicleThink );
 		return;
 	}
 
@@ -553,7 +553,7 @@ void CVehicleTank::SetTankAnim( int iAnim )
 	case TANK_BUMPFRONTRIGHT:
 		if ( m_flNextRamSound < gpGlobals->time )
 		{
-			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( abs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
+			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( fabs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
 			m_fNextMGunAttack = gpGlobals->time + 0.8;
 			if ( m_pPlayer )
 			{
@@ -573,7 +573,7 @@ void CVehicleTank::SetTankAnim( int iAnim )
 	case TANK_BUMPBACKRIGHT:
 		if ( m_flNextRamSound < gpGlobals->time )
 		{
-			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( abs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
+			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( fabs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
 			m_fNextMGunAttack = gpGlobals->time + 0.8;
 			if ( m_pPlayer )
 			{
@@ -592,7 +592,7 @@ void CVehicleTank::SetTankAnim( int iAnim )
 	case TANK_BUMPRIGHT:
 		if ( m_flNextRamSound < gpGlobals->time )
 		{
-			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( abs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
+			EMIT_SOUND_DYN( ENT( m_pPlayer->pev ), CHAN_STATIC, "tank/ramwall.wav", ( fabs( (int)( m_flLastSpeed / 250 ) ) * 0.5 + 0.3 ) * m_fTankSoundAdj, 0.8, 0, PITCH_NORM );
 			m_fNextMGunAttack = gpGlobals->time + 0.8;
 			pev->sequence = iAnim;
 			pev->frame = 0;
@@ -1361,7 +1361,7 @@ void CVehicleTank::UseVehicle( CBaseEntity *pActivator, CBaseEntity *pCaller, US
 	m_iTankMsgs = 1;
 
 	SetUse( NULL );
-	SetThink( WithPlayerThink );
+	SetThink( &CVehicleTank::WithPlayerThink );
 
 	UTIL_SetSize( m_pPlayer->pev, g_vecZero, g_vecZero );
 	m_pPlayer->pev->movetype = MOVETYPE_NOCLIP;
@@ -1466,8 +1466,8 @@ void CVehicleTank::EjectPlayer( void )
 	EMIT_SOUND( ENT( m_pPlayer->pev ), CHAN_BODY, "common/null.wav", 0, 0.8 );
 	EMIT_SOUND( ENT( m_pPlayer->pev ), CHAN_ITEM, "common/null.wav", 0, 0.8 );
 
-	SetUse( UseVehicle );
-	SetThink( WithoutPlayerThink );
+	SetUse( &CVehicleTank::UseVehicle );
+	SetThink( &CVehicleTank::WithoutPlayerThink );
 	m_pPlayer = NULL;
 
 	SetTankAnim( TANK_OFFLINE );

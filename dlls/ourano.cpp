@@ -799,8 +799,8 @@ void CNest::Spawn( void )
 
 	MonsterInit();
 
-	SetTouch( NestTouch );
-	SetUse( NestUse );
+	SetTouch( &CNest::NestTouch );
+	SetUse( &CNest::NestUse );
 }
 
 int CNest::BloodColor( void )

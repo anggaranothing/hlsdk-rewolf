@@ -215,9 +215,9 @@ void CRustFlier :: Spawn( void )
 	ResetSequenceInfo( );
 	pev->frame = RANDOM_LONG(0, 0xFF);
 
-	SetThink( HuntThink );
-	SetTouch( FlyTouch );
-	SetUse( FlierUse );
+	SetThink( &CRustFlier::HuntThink );
+	SetTouch( &CRustFlier::FlyTouch );
+	SetUse( &CRustFlier::FlierUse );
 	pev->nextthink = gpGlobals->time + 1.0;
 
 	ResetStrafe( );
@@ -437,7 +437,7 @@ void CRustFlier :: StartCrash( void )
 
 	FireTargets( STRING( m_iszTriggerOnDeath ), this, this, USE_TOGGLE, 0 );
 
-	SetThink( CrashingThink );
+	SetThink( &CRustFlier::CrashingThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	m_pGoalEnt = UTIL_FindEntityByTargetname( NULL, STRING( m_iszDeathPath ) );

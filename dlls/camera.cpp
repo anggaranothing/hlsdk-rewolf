@@ -248,7 +248,7 @@ void CRustCamera::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	MonsterInit( );
 	pev->takedamage = DAMAGE_NO;
-	SetUse( ToggleToOn );
+	SetUse( &CRustCamera::ToggleToOn );
 
 	m_pLed = CSprite::SpriteCreate( "sprites/camled.spr", pev->origin, TRUE );
 	if ( m_pLed )

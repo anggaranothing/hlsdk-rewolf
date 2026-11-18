@@ -62,9 +62,9 @@ void CDecore::DecoreInit( void )
 	pev->solid = SOLID_BBOX;
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize( pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-	SetTouch( DecoreTouch );
+	SetTouch( &CDecore::DecoreTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( Animate );
+	SetThink( &CDecore::Animate );
 	pev->health = 20;
 	ResetSequenceInfo( );
 }
@@ -288,7 +288,7 @@ int CDecoreMushroom::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker
 
 	EMIT_SOUND_DYN( ENT( pev ), CHAN_ITEM, "mushroom/mushroom_pop1.wav", 1, 0.8, 0, PITCH_NORM );
 
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 	return 0;
 }
@@ -373,7 +373,7 @@ int CDecoreMushroom2::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacke
 
 	EMIT_SOUND_DYN( ENT( pev ), CHAN_ITEM, "mushroom/mushroom_pop2.wav", 1, 0.8, 0, PITCH_NORM );
 
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 	return 0;
 }
@@ -538,7 +538,7 @@ void CDecoreHumanGibsParts::Spawn( void )
 		return;
 	}
 
-	SetThink( GutSmell );
+	SetThink( &CDecoreHumanGibsParts::GutSmell );
 	pev->nextthink = gpGlobals->time + 10;
 }
 
@@ -714,8 +714,8 @@ void CIce::Spawn( void )
 	}
 
 	SetTouch( NULL );
-	SetUse( Melt );
-	SetThink( SpawnIceBeak );
+	SetUse( &CIce::Melt );
+	SetThink( &CIce::SpawnIceBeak );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -814,7 +814,7 @@ void CDecoreMonkeySkull::Spawn( void )
 	DecoreInit( );
 	pev->solid = SOLID_NOT;
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
-	SetUse( MonkeyUse );
+	SetUse( &CDecoreMonkeySkull::MonkeyUse );
 	SetThink( NULL );
 	pev->takedamage = DAMAGE_NO;
 }
@@ -858,7 +858,7 @@ private:
 		SetSequenceByName( "footcrush" );
 		SetUse( NULL );
 		pev->effects &= ~EF_NODRAW;
-		SetThink( CheckAnimEnd );
+		SetThink( &CBigFootCrush::CheckAnimEnd );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 	void EXPORT CheckAnimEnd( void );
@@ -874,7 +874,7 @@ void CBigFootCrush::CheckAnimEnd( void )
 {
 	// sic: nothing sets m_fAnimEnd, so the foot stays
 	if ( m_fAnimEnd )
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -889,7 +889,7 @@ void CBigFootCrush::Spawn( void )
 	pev->movetype = MOVETYPE_NONE;
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
-	SetUse( BigFootUse );
+	SetUse( &CBigFootCrush::BigFootUse );
 	SetThink( NULL );
 	SetTouch( NULL );
 	pev->effects = EF_NODRAW;
@@ -969,8 +969,8 @@ void CXenomeEmbryo::Spawn( void )
 	m_MonsterState = MONSTERSTATE_IDLE;
 	pev->spawnflags |= SF_MONSTER_FALL_TO_GROUND;
 
-	SetUse( XenomeEmbryoGibUse );
-	SetThink( IdleSoundThink );
+	SetUse( &CXenomeEmbryo::XenomeEmbryoGibUse );
+	SetThink( &CXenomeEmbryo::IdleSoundThink );
 	pev->nextthink = gpGlobals->time + RANDOM_LONG( 0, 6 );
 }
 
@@ -1205,7 +1205,7 @@ private:
 
 		UTIL_SetSize( pev, Vector( -12, -12, -16 ), Vector( 12, 12, 24 ) );
 		MonsterInit( );
-		SetUse( ShockAnim );
+		SetUse( &CTubeEmbryo::ShockAnim );
 	}
 	void EXPORT ShockAnim( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 	{
@@ -1236,7 +1236,7 @@ void CTubeEmbryo::Spawn( void )
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->spawnflags |= SF_MONSTER_FALL_TO_GROUND;
 
-	SetThink( SpawnSack );
+	SetThink( &CTubeEmbryo::SpawnSack );
 }
 
 void CTubeEmbryo::Killed( entvars_t *pevAttacker, int iGib )
@@ -1492,7 +1492,7 @@ void CSpaceDebris::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	SetThink( NULL );
 	SetTouch( NULL );
-	SetUse( UseToggle );
+	SetUse( &CSpaceDebris::UseToggle );
 }
 
 void CSpaceDebris::Precache( void )
@@ -1548,9 +1548,9 @@ void CSpaceDebris::UseToggle( CBaseEntity *pActivator, CBaseEntity *pCaller, USE
 	pev->avelocity.z = RANDOM_FLOAT( -m_flAngleSpeed, m_flAngleSpeed );
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
-	SetThink( DebrisRemoveThink );
+	SetThink( &CSpaceDebris::DebrisRemoveThink );
 	pev->nextthink = gpGlobals->time + 0.2;
-	SetTouch( DebrisTouch );
+	SetTouch( &CSpaceDebris::DebrisTouch );
 
 	UTIL_SetOrigin( pev, pev->origin );
 	m_vecLastOrigin = pev->origin;
@@ -1681,7 +1681,7 @@ void CDummyBot::Spawn( void )
 	CreateBeams( );
 	MonsterInit( );
 
-	SetThink( FloatThink );
+	SetThink( &CDummyBot::FloatThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	SetSequenceByName( "idle" );
@@ -1792,13 +1792,13 @@ void CDummyBot::Killed( entvars_t *pevAttacker, int iGib )
 	pev->avelocity.x = RANDOM_FLOAT( -150, 150 );
 	pev->avelocity.y = RANDOM_FLOAT( -150, 150 );
 	pev->avelocity.z = RANDOM_FLOAT( -150, 150 );
-	SetThink( SmokeFallThink );
+	SetThink( &CDummyBot::SmokeFallThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
 void CDummyBot::BotSparkThink( void )
 {
-	SetTouch( BotExplodeTouch );
+	SetTouch( &CDummyBot::BotExplodeTouch );
 
 	if ( m_pSprite )
 		m_pSprite->pev->scale += 0.1;
@@ -1903,7 +1903,7 @@ void CDummyBot::BotSparkThink( void )
 
 void CDummyBot::SmokeFallThink( void )
 {
-	SetTouch( BotExplodeTouch );
+	SetTouch( &CDummyBot::BotExplodeTouch );
 
 	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
 		WRITE_BYTE( TE_SPRITE_SPRAY );

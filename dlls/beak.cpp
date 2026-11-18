@@ -514,7 +514,7 @@ void CBeak::Attack( int iEvent )
 	case BEAK_AE_SCRAPE2:
 		flRange = 60;
 		iDamage = gSkillData.beakDmgScrape;
-		SetTouch( LeapTouch );
+		SetTouch( &CBeak::LeapTouch );
 		break;
 
 	default:
@@ -1017,7 +1017,7 @@ void CBeakBirtherGib::Spawn( void )
 	pev->effects = 0;
 	pev->takedamage = DAMAGE_NO;
 
-	SetThink( FlopAnim );
+	SetThink( &CBeakBirtherGib::FlopAnim );
 	SetSequenceByName( "bodygib#start" );
 	SetTouch( NULL );
 	SetUse( NULL );

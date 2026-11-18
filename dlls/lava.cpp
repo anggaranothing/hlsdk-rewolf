@@ -184,7 +184,7 @@ void CLava::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 
 	SET_MODEL( ENT( pev ), "models/lavaball.mdl" );
-	SetTouch( KillTouch );
+	SetTouch( &CLava::KillTouch );
 
 	pev->gravity = RANDOM_FLOAT( 0.5, 1.25 );
 	pev->velocity.x = RANDOM_FLOAT( -1, 1 );

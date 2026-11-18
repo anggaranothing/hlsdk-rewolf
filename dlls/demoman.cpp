@@ -85,7 +85,7 @@ void CDemomanMine::Spawn( void )
 
 	pev->dmg = gSkillData.plrDmgMine;
 
-	SetThink( WaitToExplode );
+	SetThink( &CDemomanMine::WaitToExplode );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	m_pLed = NULL;
@@ -259,8 +259,8 @@ void CDemomanRocket::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
-	SetTouch( RocketExplodeTouch );
+	SetThink( &CDemomanRocket::IgniteThink );
+	SetTouch( &CDemomanRocket::RocketExplodeTouch );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	m_fPercentSeek = 0.5;
@@ -311,7 +311,7 @@ void CDemomanRocket::IgniteThink( void )
 		WRITE_BYTE( 150 );	// brightness
 	MESSAGE_END();
 
-	SetThink( AccelerateThink );
+	SetThink( &CDemomanRocket::AccelerateThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 

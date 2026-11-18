@@ -70,7 +70,7 @@ void CDropshipGib::Spawn( const char *szGibModel )
 	m_pFlame2->TurnOn( );
 	m_pFlame2->pev->spawnflags |= SF_SPRITE_TEMPORARY;
 
-	SetTouch( GibExplodeTouch );
+	SetTouch( &CDropshipGib::GibExplodeTouch );
 }
 
 void CDropshipGib::GibExplodeTouch( CBaseEntity *pOther )
@@ -218,9 +218,9 @@ void CDecoreExplode::Spawn( void )
 		ResetSequenceInfo( );
 	}
 
-	SetUse( ExplodeUse );
+	SetUse( &CDecoreExplode::ExplodeUse );
 	if ( m_iszActionAnim && strcmp( "none", STRING( m_iszActionAnim ) ) )
-		SetUse( ActionAnimUse );
+		SetUse( &CDecoreExplode::ActionAnimUse );
 }
 
 void CDecoreExplode::Precache( void )
@@ -282,7 +282,7 @@ void CDecoreExplode::ActionAnimUse( CBaseEntity *pActivator, CBaseEntity *pCalle
 		ResetSequenceInfo( );
 	}
 
-	SetUse( ExplodeUse );
+	SetUse( &CDecoreExplode::ExplodeUse );
 }
 
 void CDecoreExplode::ExplodeUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )

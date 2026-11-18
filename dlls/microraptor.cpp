@@ -500,7 +500,7 @@ void CMicroRaptor::HandleAnimEvent( MonsterEvent_t *pEvent )
 				{
 					pev->velocity = vecJump;
 					ClearBits( pev->flags, FL_ONGROUND );
-					SetTouch( JumpTouch );
+					SetTouch( &CMicroRaptor::JumpTouch );
 				}
 			}
 		}

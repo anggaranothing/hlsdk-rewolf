@@ -1239,8 +1239,8 @@ void CLightningTracer :: Spawn( void )
 	SET_MODEL(ENT( pev ), "models/tubeball.mdl");
 	UTIL_SetSize( pev, Vector( -4, -4, -4 ), Vector( 4, 4, 4 ) );
 
-	SetTouch( TrackTouch );
-	SetThink( TrackTarget );
+	SetTouch( &CLightningTracer::TrackTouch );
+	SetThink( &CLightningTracer::TrackTarget );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 	ResetSequenceInfo( );
@@ -1391,7 +1391,7 @@ void CLightningTracer :: TrackTouch ( CBaseEntity *pOther )
 
 void CLightningTracer::DieTouch ( CBaseEntity *pOther )
 {
-	SetThink( LightningTracerDie );
+	SetThink( &CLightningTracer::LightningTracerDie );
 	SetTouch( NULL );
 	pev->solid = SOLID_NOT;
 	pev->nextthink = gpGlobals->time + 1;
@@ -1476,8 +1476,8 @@ void CBallLightning::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	pev->classname = MAKE_STRING( "ball_lightning" );
 
-	SetTouch( LightningTouch );
-	SetThink( MoveThink );
+	SetTouch( &CBallLightning::LightningTouch );
+	SetThink( &CBallLightning::MoveThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	pev->takedamage = DAMAGE_NO;
@@ -1557,7 +1557,7 @@ void CBallLightning::LightningTouch( CBaseEntity *pOther )
 
 	pev->movetype = MOVETYPE_NONE;
 	pev->frame = 0;
-	SetThink( PopThink );
+	SetThink( &CBallLightning::PopThink );
 
 	::RadiusDamage( pev->origin, pev, VARS( pev->owner ), 60, 40, CLASS_NONE, DMG_SHOCK );
 
@@ -1731,8 +1731,8 @@ void CLightningBug :: Spawn( void )
 		pev->dmg = 130;
 	}
 
-	SetTouch( DieTouchBug );
-	SetThink( TrackTargetBug );
+	SetTouch( &CLightningBug::DieTouchBug );
+	SetThink( &CLightningBug::TrackTargetBug );
 
 	m_flEnergy = m_flEnergy * m_flEnergy * m_flEnergy + 1;
 
@@ -1898,7 +1898,7 @@ void CLightningBug::DieTouchBug ( CBaseEntity *pOther )
 		}
 
 		pev->effects = EF_NODRAW;
-		SetThink( LightningBugDie );
+		SetThink( &CLightningBug::LightningBugDie );
 		pev->nextthink = gpGlobals->time + 0.3;
 		pev->solid = SOLID_NOT;
 		SetTouch( NULL );

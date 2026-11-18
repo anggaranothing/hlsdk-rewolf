@@ -191,7 +191,7 @@ void CRustbitShot :: Spawn( void )
 
 	m_maxFrame = (float) MODEL_FRAMES( pev->modelindex ) - 1;
 
-	SetTouch( ShotTouch );
+	SetTouch( &CRustbitShot::ShotTouch );
 }
 
 
@@ -253,7 +253,7 @@ void CRustbitShot :: ShotTouch( CBaseEntity *pOther )
 		EMIT_SOUND_DYN( ENT(pev), CHAN_VOICE, "rustbit/RustBit_Projectile2.wav", 0.3, ATTN_NORM, 0, PITCH_NORM );
 
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -295,8 +295,8 @@ void CGunnerRocket :: Spawn( void )
 	UTIL_SetSize(pev, Vector( -4, -4, -4 ), Vector( 4, 4, 4 ));
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
-	SetTouch( RocketExplodeTouch );
+	SetThink( &CGunnerRocket::IgniteThink );
+	SetTouch( &CGunnerRocket::RocketExplodeTouch );
 
 	UTIL_MakeAimVectors( pev->angles );
 	m_vecForward = gpGlobals->v_forward;
@@ -354,7 +354,7 @@ void CGunnerRocket :: IgniteThink( void )
 	MESSAGE_END();  // move PHS/PVS data sending into here (SEND_ALL, SEND_PVS, SEND_PHS)
 
 	// set to accelerate
-	SetThink( AccelerateThink );
+	SetThink( &CGunnerRocket::AccelerateThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -431,8 +431,8 @@ void CGunnerMortar :: Spawn( void )
 		WRITE_BYTE( 255 );	// brightness
 	MESSAGE_END();
 
-	SetThink( MortarThink );
-	SetTouch( FragmentTouch );
+	SetThink( &CGunnerMortar::MortarThink );
+	SetTouch( &CGunnerMortar::FragmentTouch );
 }
 
 
@@ -481,6 +481,6 @@ void CGunnerMortar :: Fragment( void )
 	}
 
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time;
 }

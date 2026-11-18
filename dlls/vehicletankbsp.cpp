@@ -62,9 +62,9 @@ void CVehicleTankBSP::Spawn( void )
 	UTIL_SetSize( pev, pev->mins, pev->maxs );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( WaitThink );
+	SetThink( &CVehicleTankBSP::WaitThink );
 	pev->nextthink = pev->ltime + 1;
-	SetUse( TankBSPUse );
+	SetUse( &CVehicleTankBSP::TankBSPUse );
 
 	m_pPlayer = NULL;
 	m_bBlocked = FALSE;
@@ -146,7 +146,7 @@ void CVehicleTriggerTankShell::Spawn( void )
 	UTIL_SetSize( pev, pev->mins, pev->maxs );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetTouch( TouchShell );
+	SetTouch( &CVehicleTriggerTankShell::TouchShell );
 }
 
 void CVehicleTriggerTankShell::TouchShell( CBaseEntity *pOther )
@@ -189,7 +189,7 @@ void CVehicleTriggerTank::Spawn( void )
 	UTIL_SetSize( pev, pev->mins, pev->maxs );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetTouch( TouchTank );
+	SetTouch( &CVehicleTriggerTank::TouchTank );
 }
 
 void CVehicleTriggerTank::TouchTank( CBaseEntity *pOther )
@@ -231,7 +231,7 @@ void CVehicleTriggerTankGas::Spawn( void )
 	UTIL_SetSize( pev, pev->mins, pev->maxs );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetTouch( TouchTank );
+	SetTouch( &CVehicleTriggerTankGas::TouchTank );
 }
 
 void CVehicleTriggerTankGas::TouchTank( CBaseEntity *pOther )
@@ -345,7 +345,7 @@ CVehicleTankShell *CVehicleTankShell::Create( Vector vecOrigin, Vector vecAngles
 	UTIL_SetOrigin( pShell->pev, vecOrigin );
 	pShell->pev->angles = vecAngles;
 	pShell->Spawn();
-	pShell->SetTouch( ShellTouch );
+	pShell->SetTouch( &CVehicleTankShell::ShellTouch );
 	pShell->pev->owner = pOwner->edict();
 
 	return pShell;
@@ -385,7 +385,7 @@ void CVehicleTankShell::Spawn( void )
 	pev->angles.y += 90;
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( OrientThink );
+	SetThink( &CVehicleTankShell::OrientThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->dmg = 300;
 }
@@ -399,7 +399,7 @@ void CVehicleTankShell::ShellTouch( CBaseEntity *pOther )
 	{
 		if ( UTIL_PointContents( pev->origin ) == CONTENTS_SKY )
 		{
-			SetThink( SUB_Remove );
+			SetThink( &CBaseEntity::SUB_Remove );
 			pev->nextthink = gpGlobals->time;
 			return;
 		}
@@ -452,7 +452,7 @@ void CVehicleTankShell::ShellTouch( CBaseEntity *pOther )
 		RadiusDamage( pev, pevOwner, pev->dmg, CLASS_NONE, DMG_BLAST );
 
 		pev->effects |= EF_NODRAW;
-		SetThink( ShellSmokeThink );
+		SetThink( &CVehicleTankShell::ShellSmokeThink );
 		pev->nextthink = gpGlobals->time + 0.3;
 		pev->movetype = MOVETYPE_NONE;
 		pev->velocity = g_vecZero;
@@ -621,7 +621,7 @@ CVehicleTankRocket *CVehicleTankRocket::Create( Vector vecOrigin, Vector vecAngl
 	pRocket->pev->angles = vecAngles;
 	pRocket->m_hEnemy = pEnemy;
 	pRocket->Spawn();
-	pRocket->SetTouch( RocketTouch );
+	pRocket->SetTouch( &CVehicleTankRocket::RocketTouch );
 	if ( pOwner )
 		pRocket->pev->owner = pOwner->edict();
 
@@ -648,7 +648,7 @@ void CVehicleTankRocket::Spawn( void )
 	pev->velocity = gpGlobals->v_forward * 1000 + gpGlobals->v_up * 50;
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( RocketThink );
+	SetThink( &CVehicleTankRocket::RocketThink );
 	pev->nextthink = gpGlobals->time + 0.45;
 	pev->dmg = 200;
 	pev->movetype = MOVETYPE_FLY;
@@ -706,7 +706,7 @@ void CVehicleTankRocket::TankIgniteThink( void )
 
 	EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "ambience/flameburst1.wav", 1, 0.5, 0, PITCH_NORM );
 
-	SetThink( RocketThink );
+	SetThink( &CVehicleTankRocket::RocketThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -724,7 +724,7 @@ void CVehicleTankRocket::RocketTouch( CBaseEntity *pOther )
 				UTIL_Remove( m_pFlame );
 				m_pFlame = NULL;
 			}
-			SetThink( SUB_Remove );
+			SetThink( &CBaseEntity::SUB_Remove );
 		}
 		else
 		{
@@ -797,7 +797,7 @@ void CVehicleTankRocket::RocketTouch( CBaseEntity *pOther )
 			for ( int i = 0; i < 30; i++ )
 			{
 				Vector vecTracer = gpGlobals->v_forward * RANDOM_FLOAT( -600, 600 ) + gpGlobals->v_right * RANDOM_FLOAT( -600, 600 ) + gpGlobals->v_up * RANDOM_FLOAT( -600, 600 );
-				if ( abs( (int)vecTracer.Length() ) >= 100 )
+				if ( fabs( (int)vecTracer.Length() ) >= 100 )
 				{
 					MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
 						WRITE_BYTE( TE_USERTRACER );
@@ -814,7 +814,7 @@ void CVehicleTankRocket::RocketTouch( CBaseEntity *pOther )
 				}
 			}
 
-			SetThink( RocketSmokeThink );
+			SetThink( &CVehicleTankRocket::RocketSmokeThink );
 		}
 
 		pev->nextthink = gpGlobals->time;

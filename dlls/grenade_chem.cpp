@@ -263,7 +263,7 @@ void CChemGrenade::Splatter( TraceResult *pTrace )
 
 void CChemGrenade::ChemicalSmoke( void )
 {
-	SetThink( ChemicalSmokeThink );
+	SetThink( &CChemGrenade::ChemicalSmokeThink );
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -326,7 +326,7 @@ CChemGrenade *CChemGrenade::ShootSticky( entvars_t *pevOwner, Vector vecStart, V
 	pGrenade->pev->gravity = 0.5;
 
 	pGrenade->pev->dmgtime = gpGlobals->time + time;
-	pGrenade->SetThink( TimedChemicalThink );
+	pGrenade->SetThink( &CChemGrenade::TimedChemicalThink );
 	pGrenade->pev->nextthink = gpGlobals->time + 0.1;
 	if (time < 0.1)
 	{
@@ -334,7 +334,7 @@ CChemGrenade *CChemGrenade::ShootSticky( entvars_t *pevOwner, Vector vecStart, V
 		pGrenade->pev->velocity = Vector( 0, 0, 0 );
 	}
 
-	pGrenade->SetTouch( StickyChemicalTouch );
+	pGrenade->SetTouch( &CChemGrenade::StickyChemicalTouch );
 
 	SET_MODEL(ENT(pGrenade->pev), "models/tubeball.mdl");
 	pGrenade->pev->dmg = pGrenade->ChemicalMixture.volatility;
@@ -403,7 +403,7 @@ void CChemGrenade::StickyChemicalTouch( CBaseEntity *pOther )
 
 	if ( ChemicalMixture.explosion != 3 && ChemicalMixture.explosion != 4 && ChemicalMixture.explosion != 5 )
 	{
-		SetThink( ChemicalSmoke );
+		SetThink( &CChemGrenade::ChemicalSmoke );
 		pev->velocity = g_vecZero;
 		pev->nextthink = gpGlobals->time + 0.1;
 		m_flTimeExploded = gpGlobals->time;
@@ -561,7 +561,7 @@ CChemGrenade *CChemGrenade::ShootBouncy( entvars_t *pevOwner, Vector vecStart, V
 	pGrenade->pev->owner = ENT(pevOwner);
 
 	pGrenade->pev->dmgtime = gpGlobals->time + time;
-	pGrenade->SetThink( TimedChemicalThink );
+	pGrenade->SetThink( &CChemGrenade::TimedChemicalThink );
 	pGrenade->pev->nextthink = gpGlobals->time + 0.1;
 	if (time < 0.1)
 	{
@@ -571,7 +571,7 @@ CChemGrenade *CChemGrenade::ShootBouncy( entvars_t *pevOwner, Vector vecStart, V
 
 	pGrenade->pev->avelocity.x = RANDOM_FLOAT( -100, -500 );
 	pGrenade->pev->dmg = pGrenade->ChemicalMixture.volatility;
-	pGrenade->SetTouch( BouncyChemicalTouch );
+	pGrenade->SetTouch( &CChemGrenade::BouncyChemicalTouch );
 
 	SET_MODEL(ENT(pGrenade->pev), "models/tubeball.mdl");
 
@@ -608,10 +608,10 @@ CChemGrenade *CChemGrenade::ShootSplatter( entvars_t *pevOwner, Vector vecStart,
 	pGrenade->pev->angles = UTIL_VecToAngles( pGrenade->pev->velocity );
 	pGrenade->pev->owner = ENT(pevOwner);
 
-	pGrenade->SetThink( ChemicalTrail );
+	pGrenade->SetThink( &CChemGrenade::ChemicalTrail );
 	pGrenade->pev->nextthink = gpGlobals->time + 0.2;
 	pGrenade->pev->avelocity.x = RANDOM_FLOAT( -100, -500 );
-	pGrenade->SetTouch( SplatterTouch );
+	pGrenade->SetTouch( &CChemGrenade::SplatterTouch );
 	pGrenade->pev->dmg = pGrenade->ChemicalMixture.volatility;
 
 	SET_MODEL(ENT(pGrenade->pev), "models/tubeball.mdl");
@@ -754,7 +754,7 @@ void CChemGrenade::Explode( TraceResult *pTrace, int bitsDamageType )
 	}
 
 	pev->effects |= EF_NODRAW;
-	SetThink( Smoke );
+	SetThink( &CGrenade::Smoke );
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
 
@@ -800,7 +800,7 @@ void CGib :: SpawnStickyAcidGibs( entvars_t *pevVictim, Vector vecOrigin, int cG
 
 		pGib->pev->movetype = MOVETYPE_TOSS;
 		UTIL_SetSize ( pGib->pev, Vector ( 0, 0 ,0 ), Vector ( 0, 0, 0 ) );
-		pGib->SetTouch ( StickyAcidTouch );
+		pGib->SetTouch ( &CGib::StickyAcidTouch );
 		pGib->SetThink (NULL);
 
 		pGib->LimitVelocity();
@@ -821,7 +821,7 @@ void CGib :: StickyAcidTouch ( CBaseEntity *pOther )
 		return;
 	}
 
-	SetThink ( SUB_Remove );
+	SetThink ( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.5;
 
 	if ( !FClassnameIs( pOther->pev, "worldspawn" ) )

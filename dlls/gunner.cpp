@@ -92,9 +92,9 @@ void CAnimeRocket::Spawn( void )
 	UTIL_SetSize( pev, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
+	SetThink( &CAnimeRocket::IgniteThink );
 	pev->nextthink = gpGlobals->time + RANDOM_FLOAT( 0.4, 0.6 );
-	SetTouch( RocketTouch );
+	SetTouch( &CAnimeRocket::RocketTouch );
 
 	// aim ahead of the owner, with some spread
 	Vector vecForward, vecRight, vecUp;
@@ -130,7 +130,7 @@ void CAnimeRocket::IgniteThink( void )
 	m_pFlare->pev->spawnflags |= SF_SPRITE_TEMPORARY;
 	m_pFlare->SetAttachment( edict(), 0 );
 
-	SetThink( AccelerateThink );
+	SetThink( &CAnimeRocket::AccelerateThink );
 	pev->nextthink = gpGlobals->time;
 
 	pev->velocity = pev->velocity.Normalize() * 500;
@@ -262,7 +262,7 @@ void CAnimeRocket::RocketTouch( CBaseEntity *pOther )
 	}
 
 	pev->effects |= EF_NODRAW;
-	SetThink( Smoke );
+	SetThink( &CGrenade::Smoke );
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
 
@@ -330,9 +330,9 @@ void CBackpackAnimeRocket::Spawn( void )
 	UTIL_SetSize( pev, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
+	SetThink( &CBackpackAnimeRocket::IgniteThink );
 	pev->nextthink = gpGlobals->time + 0.2;
-	SetTouch( RocketTouch );
+	SetTouch( &CBackpackAnimeRocket::RocketTouch );
 
 	// aim ahead of the owner, with some spread
 	Vector vecForward, vecRight, vecUp;
@@ -381,7 +381,7 @@ void CBackpackAnimeRocket::IgniteThink( void )
 void CBackpackAnimeRocket::AccelerateThink( void )
 {
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( AccelerateThink );
+	SetThink( &CBackpackAnimeRocket::AccelerateThink );
 
 	// check world boundaries
 	if ( pev->origin.x >= -4096 && pev->origin.x <= 4096 && pev->origin.y >= -4096 && pev->origin.y <= 4096 && pev->origin.z >= -4096 && pev->origin.z <= 4096 )
@@ -497,7 +497,7 @@ void CBackpackAnimeRocket::RocketTouch( CBaseEntity *pOther )
 	}
 
 	pev->effects |= EF_NODRAW;
-	SetThink( Smoke );
+	SetThink( &CGrenade::Smoke );
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
 
@@ -941,7 +941,7 @@ void CGunner::GibMonster( void )
 		pRocket->pev->movetype = MOVETYPE_TOSS;
 		pRocket->pev->dmg = 60;
 		pRocket->SetTouch( NULL );
-		pRocket->SetThink( CGrenade::Detonate );
+		pRocket->SetThink( &CGrenade::Detonate );
 		pRocket->pev->nextthink = gpGlobals->time + RANDOM_FLOAT( 0, 2 );
 	}
 
@@ -1351,7 +1351,7 @@ void CGunner::Spawn( void )
 	m_iVollyCount = 4;
 	m_flDistTooFar = 4096;
 
-	SetUse( ToggleTakedamage );
+	SetUse( &CGunner::ToggleTakedamage );
 }
 
 void CGunner::Precache( void )

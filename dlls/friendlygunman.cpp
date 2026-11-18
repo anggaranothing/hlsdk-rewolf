@@ -378,7 +378,7 @@ void CFriendlyGunman :: Spawn()
 	MonsterInit();
 
 	m_afCapability		= bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
-	SetUse( FollowerUse );
+	SetUse( &CFriendlyGunman::FollowerUse );
 
 	if ( m_iGunState == 2 )
 		SetBodygroup( 1, 1 );

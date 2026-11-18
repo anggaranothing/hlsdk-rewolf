@@ -79,7 +79,7 @@ void CDart::Shoot( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity )
 	pDart->pev->angles = UTIL_VecToAngles( vecVelocity );
 
 	pDart->SetThink( NULL );
-	pDart->SetTouch( ShotTouch );
+	pDart->SetTouch( &CDart::ShotTouch );
 	pDart->pev->nextthink = gpGlobals->time + 0.1;
 
 	if ( UTIL_PercentChance( 85 ) )
@@ -92,7 +92,7 @@ void CDart::ShotTouch( CBaseEntity *pOther )
 {
 	pev->nextthink = gpGlobals->time;
 	pev->avelocity = g_vecZero;
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 
 	if ( pOther->pev->takedamage == DAMAGE_NO )
 	{
@@ -198,8 +198,8 @@ void CDartTrap::Spawn( void )
 	pev->effects |= EF_NODRAW;
 	pev->takedamage = DAMAGE_NO;
 
-	SetUse( OnUse );
-	SetThink( DartShootThink );
+	SetUse( &CDartTrap::OnUse );
+	SetThink( &CDartTrap::DartShootThink );
 }
 
 void CDartTrap::OnUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -296,8 +296,8 @@ void CTargetRocket::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
-	SetTouch( RocketExplodeTouch );
+	SetThink( &CTargetRocket::IgniteThink );
+	SetTouch( &CTargetRocket::RocketExplodeTouch );
 
 	UTIL_MakeAimVectors( pev->angles );
 	m_vecForward = gpGlobals->v_forward;
@@ -346,7 +346,7 @@ void CTargetRocket::IgniteThink( void )
 		WRITE_BYTE( 255 );	// brightness
 	MESSAGE_END( );
 
-	SetThink( AccelerateThink );
+	SetThink( &CTargetRocket::AccelerateThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -431,8 +431,8 @@ void CTargetRocketLauncher::Spawn( void )
 	pev->movetype = MOVETYPE_NONE;
 	pev->effects |= EF_NODRAW;
 
-	SetUse( OnUse );
-	SetThink( RocketShootThink );
+	SetUse( &CTargetRocketLauncher::OnUse );
+	SetThink( &CTargetRocketLauncher::RocketShootThink );
 }
 
 void CTargetRocketLauncher::OnUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -471,5 +471,5 @@ void CTargetRocketLauncher::RocketShootThink( void )
 	pRocket->m_pTargetEntity = CBaseEntity::Instance( pentTarget );
 
 	pev->nextthink = gpGlobals->time + 1;
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 }

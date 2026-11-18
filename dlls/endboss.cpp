@@ -107,7 +107,7 @@ void CEndBossKataball::Spawn( void )
 	pev->renderfx = kRenderFxNone;
 	pev->renderamt = 255;
 
-	SetThink( IgniteThink );
+	SetThink( &CEndBossKataball::IgniteThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	SetTouch( NULL );
 
@@ -167,7 +167,7 @@ void CEndBossKataball::KataTouch( CBaseEntity *pOther )
 	case 2:	EMIT_SOUND( ENT( pev ), CHAN_WEAPON, "endboss/imp3_gs.wav", 1, ATTN_NORM );	break;
 	}
 
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	SetTouch( NULL );
 	pev->nextthink = gpGlobals->time + 0.2;
 	pev->effects |= EF_NODRAW;
@@ -175,8 +175,8 @@ void CEndBossKataball::KataTouch( CBaseEntity *pOther )
 
 void CEndBossKataball::IgniteThink( void )
 {
-	SetTouch( KataTouch );
-	SetThink( AccelerateThink );
+	SetTouch( &CEndBossKataball::KataTouch );
+	SetThink( &CEndBossKataball::AccelerateThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->movetype = MOVETYPE_FLY;
 }
@@ -321,9 +321,9 @@ void CEndBossRocket::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( IgniteThink );
+	SetThink( &CEndBossRocket::IgniteThink );
 	pev->nextthink = gpGlobals->time + RANDOM_FLOAT( 0.4, 0.8 );
-	SetTouch( RocketTouch );
+	SetTouch( &CEndBossRocket::RocketTouch );
 
 	Vector vecForward, vecRight, vecUp;
 	UTIL_MakeVectorsPrivate( pev->owner->v.angles, vecForward, vecRight, vecUp );
@@ -372,7 +372,7 @@ void CEndBossRocket::IgniteThink( void )
 		WRITE_BYTE( 180 );	// brightness
 	MESSAGE_END( );
 
-	SetThink( AccelerateThink );
+	SetThink( &CEndBossRocket::AccelerateThink );
 	pev->nextthink = gpGlobals->time;
 
 	pev->velocity = pev->velocity.Normalize( ) * 700;
@@ -489,7 +489,7 @@ void CEndBossRocket::RocketTouch( CBaseEntity *pOther )
 	}
 
 	pev->effects |= EF_NODRAW;
-	SetThink( Smoke );
+	SetThink( &CGrenade::Smoke );
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 2;
 
@@ -529,7 +529,7 @@ void CAntirocketflare::Spawn( void )
 	pev->effects |= EF_NODRAW;
 
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	SetUse( NULL );
 	SetBlocked( NULL );
 	pev->nextthink = gpGlobals->time + 3;
@@ -577,7 +577,7 @@ void CEndBossGib::Spawn( void )
 	pev->effects = 0;
 	pev->takedamage = DAMAGE_NO;
 
-	SetThink( FlopAnim );
+	SetThink( &CEndBossGib::FlopAnim );
 	SetSequenceByName( "death" );
 	SetTouch( NULL );
 	SetUse( NULL );

@@ -115,7 +115,7 @@ void CRand_Speaker::Spawn( void )
 	if ( m_fVolume > 1 || m_fVolume < 0 )
 		m_fVolume = 1;
 
-	SetThink( Play );
+	SetThink( &CRand_Speaker::Play );
 	pev->nextthink = gpGlobals->time + m_fBaseTime + RANDOM_FLOAT( 0, m_fMaxAddTime );
 }
 
@@ -272,8 +272,8 @@ void CRand_Trigger::KeyValue( KeyValueData *pkvd )
 
 void CRand_Trigger::Spawn( void )
 {
-	SetUse( Rand_TriggerUse );
-	SetThink( Rand_TriggerThink );
+	SetUse( &CRand_Trigger::Rand_TriggerUse );
+	SetThink( &CRand_Trigger::Rand_TriggerThink );
 	pev->solid = SOLID_NOT;
 	pev->nextthink = gpGlobals->time + m_fBaseTime + RANDOM_FLOAT( m_fMinAddTime, m_fMaxAddTime );
 }
@@ -349,7 +349,7 @@ void CDirectSentence::Spawn( void )
 	// single player only
 	if ( g_pGameRules && g_pGameRules->IsMultiplayer() )
 	{
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
 	}
@@ -357,7 +357,7 @@ void CDirectSentence::Spawn( void )
 	pev->solid = SOLID_NOT;
 	SetThink( NULL );
 	SetTouch( NULL );
-	SetUse( PlaySound );
+	SetUse( &CDirectSentence::PlaySound );
 	pev->classname = ALLOC_STRING( "player_speaker" );
 }
 

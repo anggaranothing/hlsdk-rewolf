@@ -332,7 +332,7 @@ void CMeteor::Spawn( void )
 	pev->avelocity.z = RANDOM_FLOAT( -150, 150 );
 
 	m_bDebris = TRUE;
-	SetTouch( MeteorTouch );
+	SetTouch( &CMeteor::MeteorTouch );
 	StartTrail();
 
 	switch ( m_iType )
@@ -342,14 +342,14 @@ void CMeteor::Spawn( void )
 		SET_MODEL( ENT( pev ), "models/lavaball.mdl" );
 		pev->dmg = 0;
 		pev->nextthink = gpGlobals->time + 0.1;
-		SetThink( StreakerThink );
+		SetThink( &CMeteor::StreakerThink );
 		break;
 
 	case METEOR_SMALL:
 		UTIL_SetSize( pev, Vector( -8, -8, -8 ), Vector( 8, 8, 8 ) );
 		SET_MODEL( ENT( pev ), "models/asteroid.mdl" );
 		pev->nextthink = gpGlobals->time + 0.1;
-		SetThink( LittleSmokingMeteorThink );
+		SetThink( &CMeteor::LittleSmokingMeteorThink );
 		break;
 
 	case METEOR_LARGE:
@@ -357,7 +357,7 @@ void CMeteor::Spawn( void )
 		SET_MODEL( ENT( pev ), "models/asteroid.mdl" );
 		pev->body = 1;
 		pev->nextthink = gpGlobals->time + 0.1;
-		SetThink( BigSmokingMeteorThink );
+		SetThink( &CMeteor::BigSmokingMeteorThink );
 		break;
 	}
 }
@@ -448,7 +448,7 @@ void CMeteor::StreakerThink( void )
 		float flTime = ( tr.vecEndPos - vecStart ).Length() / pev->velocity.Length();
 
 		pev->nextthink = gpGlobals->time + RANDOM_FLOAT( flTime * 0.25, flTime );
-		SetThink( KillMeteorThink );
+		SetThink( &CMeteor::KillMeteorThink );
 	}
 	else
 	{
@@ -691,7 +691,7 @@ void CMeteorExplosion::Spawn( void )
 	SET_MODEL( ENT( pev ), "sprites/impact.spr" );
 
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( Animate );
+	SetThink( &CMeteorExplosion::Animate );
 }
 
 void CMeteorExplosion::Animate( void )
@@ -739,7 +739,7 @@ void CMeteorChip::Spawn( void )
 	SET_MODEL( ENT( pev ), "sprites/chip.spr" );
 
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( Animate );
+	SetThink( &CMeteorChip::Animate );
 }
 
 void CMeteorChip::Touch( CBaseEntity *pOther )
@@ -869,5 +869,5 @@ void CMeteorSound::Spawn( void )
 	pev->effects = EF_NODRAW;
 
 	pev->nextthink = gpGlobals->time + 2;
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 }

@@ -75,8 +75,8 @@ void CXenomeShot::Shoot( entvars_t *pevOwner, Vector vecStart, Vector vecVelocit
 	pShot->pev->velocity = vecVelocity;
 	pShot->pev->angles = UTIL_VecToAngles( vecVelocity );
 
-	pShot->SetThink( XenomeShotThink );
-	pShot->SetTouch( TouchShot );
+	pShot->SetThink( &CXenomeShot::XenomeShotThink );
+	pShot->SetTouch( &CXenomeShot::TouchShot );
 	pShot->pev->nextthink = gpGlobals->time;
 }
 
@@ -92,7 +92,7 @@ void CXenomeShot::XenomeShotThink( void )
 void CXenomeShot::TouchShot( CBaseEntity *pOther )
 {
 	pev->nextthink = gpGlobals->time;
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 
 	if ( pOther->pev->takedamage == DAMAGE_NO )
 	{
@@ -545,7 +545,7 @@ void CXenome::HandleAnimEvent( MonsterEvent_t *pEvent )
 			pev->velocity.z += ( 0.625 * flGravity ) * 0.7;
 
 			m_flNextJump = gpGlobals->time + 3.0;
-			SetTouch( LeapTouch );
+			SetTouch( &CXenome::LeapTouch );
 		}
 		break;
 

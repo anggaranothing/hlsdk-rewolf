@@ -188,24 +188,24 @@ void CDmlRocket :: Spawn( void )
 		WRITE_BYTE( 150 );	// brightness
 	MESSAGE_END();
 
-	SetTouch( RocketTouch );
+	SetTouch( &CDmlRocket::RocketTouch );
 
 	m_flHomingFuel = 0;
 
 	switch ( m_iFlightpath )
 	{
 	case 1:
-		SetThink( FollowThink );
+		SetThink( &CDmlRocket::FollowThink );
 		break;
 	case 2:
 		{
-			SetThink( TrackTarget );
+			SetThink( &CDmlRocket::TrackTarget );
 			float flFuel = RANDOM_FLOAT( 0, 0.5 ) + 0.8;
 			m_flHomingFuel = flFuel * flFuel * flFuel + 1;
 		}
 		break;
 	default:
-		SetThink( RocketThink );
+		SetThink( &CDmlRocket::RocketThink );
 		break;
 	}
 
@@ -340,14 +340,14 @@ void CDmlRocket :: TrackTarget ( void )
 	if ( g_pGameRules->IsMultiplayer() && m_flHomingFuel <= 0 )
 	{
 		// out of fuel: fly straight on
-		SetThink( RocketThink );
+		SetThink( &CDmlRocket::RocketThink );
 		pev->velocity = pev->velocity.Normalize() * 900;
 		return;
 	}
 
 	if ( m_hEnemy == NULL || m_flStopHoming < gpGlobals->time )
 	{
-		SetThink( RocketThink );
+		SetThink( &CDmlRocket::RocketThink );
 		return;
 	}
 
@@ -411,7 +411,7 @@ void CDmlRocket :: TrackTouch ( CBaseEntity *pOther )
 	if ( UTIL_PointContents( pev->origin ) == CONTENTS_SKY )
 	{
 		pev->nextthink = gpGlobals->time;
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		return;
 	}
 
@@ -438,8 +438,8 @@ void CDmlRocket::ShootClusterGrenades( CBaseEntity *pOther )
 	if ( m_iDetonate == 3 && pev->dmgtime >= gpGlobals->time )
 	{
 		// timed: tumble until it's time
-		SetTouch( BounceSoundTouch );
-		SetThink( TumbleThink );
+		SetTouch( &CDmlRocket::BounceSoundTouch );
+		SetThink( &CDmlRocket::TumbleThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 		pev->movetype = MOVETYPE_BOUNCE;
 		pev->friction = 0.8;
@@ -517,15 +517,15 @@ void CDmlRocket::RocketTouch( CBaseEntity *pOther )
 	if ( UTIL_PointContents( pev->origin ) == CONTENTS_SKY )
 	{
 		pev->nextthink = gpGlobals->time;
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		return;
 	}
 
 	if ( m_iDetonate == 3 && pev->dmgtime >= gpGlobals->time )
 	{
 		// timed: bounce until it's time
-		SetTouch( BounceSoundTouch );
-		SetThink( TumbleThink );
+		SetTouch( &CDmlRocket::BounceSoundTouch );
+		SetThink( &CDmlRocket::TumbleThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 		pev->movetype = MOVETYPE_BOUNCE;
 
@@ -564,7 +564,7 @@ void CDmlRocket::RocketTouch( CBaseEntity *pOther )
 		RocketDecal( &tr, vecSpot, vecSpot + pev->velocity.Normalize() * 64 );
 
 	SetTouch( NULL );
-	SetThink( RemoveThink );
+	SetThink( &CDmlRocket::RemoveThink );
 	pev->nextthink = gpGlobals->time + 5.0;
 	pev->effects |= EF_NODRAW;
 
@@ -623,12 +623,12 @@ void CDmlRocket::RocketThink( void )
 
 		if ( m_iIsBrother == 1 )
 		{
-			SetThink( LittleThink );
+			SetThink( &CDmlRocket::LittleThink );
 			return;
 		}
 
 		if ( m_iIsBrother == 2 )
-			SetThink( BigThink );
+			SetThink( &CDmlRocket::BigThink );
 	}
 }
 
@@ -753,7 +753,7 @@ void CDmlRocket::BigThink( void )
 
 	if ( !m_BrotherRocket )
 	{
-		SetThink( FollowThink );
+		SetThink( &CDmlRocket::FollowThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
 	}
@@ -811,7 +811,7 @@ void CDmlRocket::LittleThink( void )
 	if ( !m_BrotherRocket )
 	{
 		m_iIsBrother = 2;
-		SetThink( FollowThink );
+		SetThink( &CDmlRocket::FollowThink );
 	}
 
 	pev->nextthink = gpGlobals->time + 0.1;
@@ -979,7 +979,7 @@ void CDmlRocket::Explode( TraceResult *pTrace, int bitsDamageType )
 		}
 	}
 
-	SetThink( Smoke );
+	SetThink( &CDmlRocket::Smoke );
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time + 0.3;
 
@@ -1092,7 +1092,7 @@ void CDmlRocket::BecomeTripmine( void )
 
 	// power up in a second
 	m_flPowerUp = gpGlobals->time + 1.0;
-	SetThink( PowerupThink );
+	SetThink( &CDmlRocket::PowerupThink );
 	pev->nextthink = gpGlobals->time + 0.2;
 
 	pev->takedamage = DAMAGE_YES;
@@ -1155,7 +1155,7 @@ void CDmlRocket::MakeBeam( void )
 	m_flBeamLength = tr.flFraction;
 
 	// set to follow laser spot
-	SetThink( BeamBreakThink );
+	SetThink( &CDmlRocket::BeamBreakThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	UTIL_MakeVectors( pev->angles );
@@ -1220,7 +1220,7 @@ void CDmlRocket::Killed( entvars_t *pevAttacker, int iGib )
 		pev->owner = ENT( pevAttacker );
 	}
 
-	SetThink( DelayDeathThink );
+	SetThink( &CDmlRocket::DelayDeathThink );
 	pev->nextthink = gpGlobals->time + RANDOM_FLOAT( 0.1, 0.3 );
 
 	if ( m_pBeam )
@@ -1240,7 +1240,7 @@ void CDmlRocket::DelayDeathThink( void )
 	UTIL_TraceLine ( pev->origin + m_vecDir * 8, pev->origin - m_vecDir * 64,  dont_ignore_monsters, ENT(pev), & tr);
 
 	SetTouch( NULL );
-	SetThink( RemoveThink );
+	SetThink( &CDmlRocket::RemoveThink );
 	pev->nextthink = gpGlobals->time + 5.0;
 	pev->effects |= EF_NODRAW;
 

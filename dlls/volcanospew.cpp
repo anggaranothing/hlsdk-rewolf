@@ -49,7 +49,7 @@ void CVolcanoSpew::Spawn( void )
 
 	SetTouch( NULL );
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( SprayLava );
+	SetThink( &CVolcanoSpew::SprayLava );
 	m_iSprays = 0;
 
 	ResetSequenceInfo();
@@ -80,7 +80,7 @@ void CVolcanoSpew::SprayLava( void )
 	MESSAGE_END();
 
 	if ( m_iSprays > 5 )
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 }

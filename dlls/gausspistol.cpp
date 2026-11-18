@@ -106,7 +106,7 @@ void CNullEnt::Spawn( void )
 	UTIL_SetSize( pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
 
 	SetTouch( NULL );
-	SetThink( WaitThink );
+	SetThink( &CNullEnt::WaitThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	m_iBrightness = 90;
@@ -124,7 +124,7 @@ void CNullEnt::WaitThink( void )
 	if ( m_fActive )
 	{
 		m_fHitWorld = 0;
-		SetThink( LazerThink );
+		SetThink( &CNullEnt::LazerThink );
 	}
 
 	pev->nextthink = gpGlobals->time + 0.1;
@@ -161,7 +161,7 @@ void CNullEnt::LazerThink( void )
 
 	m_iBrightness -= 10;
 	if ( m_iBrightness < 5 )
-		SetThink( RemoveThink );
+		SetThink( &CNullEnt::RemoveThink );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 }
@@ -231,8 +231,8 @@ void CFastShot::Spawn( void )
 
 	SET_MODEL( ENT(pev), "sprites/gausswomp.spr" );
 
-	SetTouch( FastShotTouch );
-	SetThink( Animate );
+	SetTouch( &CFastShot::FastShotTouch );
+	SetThink( &CFastShot::Animate );
 
 	pev->frame = 0;
 	pev->scale = 0.25;
@@ -295,7 +295,7 @@ void CFastShot::FastShotTouch( CBaseEntity *pOther )
 	CSoundEnt::InsertSound( bits_SOUND_COMBAT, pev->origin, 600, 0.1 );
 
 	SetTouch( NULL );
-	SetThink( SUB_Remove );
+	SetThink( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->effects |= EF_NODRAW;
 }
@@ -338,8 +338,8 @@ void CBoltShot::Spawn( void )
 
 	SET_MODEL( ENT(pev), "sprites/gausswomp.spr" );
 
-	SetTouch( BoltTouch );
-	SetThink( ThrowSparks );
+	SetTouch( &CBoltShot::BoltTouch );
+	SetThink( &CBoltShot::ThrowSparks );
 
 	pev->frame = 0;
 	pev->scale = 1.0;
@@ -479,7 +479,7 @@ void CGaussGlow::Spawn( void )
 	pev->renderamt = 255;
 	pev->renderfx = kRenderFxNoDissipation;
 
-	SetThink( AnimateGlow );
+	SetThink( &CGaussGlow::AnimateGlow );
 
 	pev->frame = 0;
 	pev->scale = 0.5;
@@ -548,8 +548,8 @@ void CGaussBall::Spawn( void )
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
-	SetTouch( BallBounceTouch );
-	SetThink( TumbleClusterThink );
+	SetTouch( &CGaussBall::BallBounceTouch );
+	SetThink( &CGaussBall::TumbleClusterThink );
 
 	pev->dmgtime = gpGlobals->time + flLife;
 	pev->nextthink = gpGlobals->time + 0.1;
@@ -599,7 +599,7 @@ void CGaussBall::TumbleClusterThink( void )
 
 	if (pev->dmgtime <= gpGlobals->time)
 	{
-		SetThink( RemoveBall );
+		SetThink( &CGaussBall::RemoveBall );
 	}
 	if (pev->waterlevel != 0)
 	{

@@ -410,7 +410,7 @@ int CSPChemicalGun::CalcViscosity( void )
 	}
 
 	if ( ChemicalMixture.acid && ChemicalMixture.base )
-		ChemicalMixture.viscosity = 69 - abs( ChemicalMixture.acid - ChemicalMixture.base ) * 13;
+		ChemicalMixture.viscosity = 69 - fabs( ChemicalMixture.acid - ChemicalMixture.base ) * 13;
 	else
 		ChemicalMixture.viscosity = 100;
 
@@ -475,7 +475,7 @@ int CSPChemicalGun::CalcStability( void )
 	ChemicalMixture.stability = 55;
 
 	if ( ChemicalMixture.acid && ChemicalMixture.base )
-		ChemicalMixture.stability = abs( ChemicalMixture.acid - ChemicalMixture.base ) * 10;
+		ChemicalMixture.stability = fabs( ChemicalMixture.acid - ChemicalMixture.base ) * 10;
 
 	ChemicalMixture.stability += ChemicalMixture.nuet * 20;
 	return ChemicalMixture.stability;

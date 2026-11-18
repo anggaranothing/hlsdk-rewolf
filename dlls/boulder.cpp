@@ -84,7 +84,7 @@ void CBoulder::Spawn( void )
 
 	SetThink( NULL );
 	SetTouch( NULL );
-	SetUse( UseBoulder );
+	SetUse( &CBoulder::UseBoulder );
 
 	pev->dmg = 500;
 	m_fZOffSet = 0;
@@ -134,7 +134,7 @@ void CBoulder::UseBoulder( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 {
 	SetUse( NULL );
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( DistibuteThinks );
+	SetThink( &CBoulder::DistibuteThinks );
 	m_iThink++;
 }
 

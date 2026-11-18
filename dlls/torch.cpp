@@ -58,7 +58,7 @@ void CFlame::Spawn( void )
 	SET_MODEL( ENT( pev ), "sprites/flames.spr" );
 	pev->frame = rand( ) % 21;
 	SetTouch( NULL );
-	SetThink( Animate );
+	SetThink( &CFlame::Animate );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 

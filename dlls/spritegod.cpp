@@ -97,8 +97,8 @@ void CSpriteGod::Spawn( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
 	SetTouch( NULL );
-	SetUse( UseToggle );
-	SetThink( SpewEvent );
+	SetUse( &CSpriteGod::UseToggle );
+	SetThink( &CSpriteGod::SpewEvent );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -164,7 +164,7 @@ void CSpriteGod::UseToggle( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_T
 	if ( !m_iOn )
 	{
 		m_iOn = 1;
-		SetThink( SpewEvent );
+		SetThink( &CSpriteGod::SpewEvent );
 		pev->nextthink = gpGlobals->time + m_iFrequency / 10;	// sic: integer division
 	}
 	else

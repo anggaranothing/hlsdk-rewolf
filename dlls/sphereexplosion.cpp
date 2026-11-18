@@ -69,12 +69,12 @@ void CSphereExplosion::Spawn( void )
 
 	SetTouch( NULL );
 	SetThink( NULL );
-	SetUse( UseToggle );
+	SetUse( &CSphereExplosion::UseToggle );
 }
 
 void CSphereExplosion::UseToggle( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	SetThink( ExplodeEvent );
+	SetThink( &CSphereExplosion::ExplodeEvent );
 	pev->nextthink = gpGlobals->time;
 }
 

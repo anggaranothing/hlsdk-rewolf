@@ -142,7 +142,7 @@ void CHatchetFish::Spawn( void )
 	m_flFieldOfView		= -0.5;	// 180 degree FOV
 	m_flDistLook		= 750;
 	MonsterInit();
-	SetThink( SwimThink );
+	SetThink( &CHatchetFish::SwimThink );
 	SetUse( NULL );
 	SetTouch( NULL );
 	pev->view_ofs = g_vecZero;
@@ -640,5 +640,5 @@ void CHatchetFish::Killed(entvars_t *pevAttacker, int iGib)
 	pev->solid = SOLID_NOT;
 	pev->movetype = MOVETYPE_TOSS;
 	pev->takedamage = DAMAGE_NO;
-	SetThink( DeadThink );
+	SetThink( &CHatchetFish::DeadThink );
 }

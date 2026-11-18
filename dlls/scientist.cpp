@@ -551,7 +551,7 @@ void CScientist :: Spawn( void )
 	MonsterInit();
 
 	m_afCapability |= bits_CAP_TURN_HEAD;
-	SetUse( ToggleUse );
+	SetUse( &CScientist::ToggleUse );
 	pev->view_ofs = Vector ( 0, 0, 50 );// position of the eyes relative to monster's origin.
 }
 
@@ -1127,7 +1127,7 @@ void CScientist :: PainSound ( void )
 		return;
 
 	// sic: abs() takes an int, so this waits a whole second
-	if ( abs( gpGlobals->time - m_tLastTimeHurt ) < 0.7 )
+	if ( fabs( gpGlobals->time - m_tLastTimeHurt ) < 0.7 )
 		return;
 
 	if ( m_MonsterState == MONSTERSTATE_SCRIPT || m_MonsterState == MONSTERSTATE_PRONE || m_MonsterState == MONSTERSTATE_PLAYDEAD || m_MonsterState == MONSTERSTATE_NONE )
@@ -1602,7 +1602,7 @@ void CSittingScientist :: Spawn( )
 	pev->sequence = m_baseSequence + RANDOM_LONG(0,4);
 	ResetSequenceInfo( );
 
-	SetThink (SittingThink);
+	SetThink (&CSittingScientist::SittingThink);
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	DROP_TO_FLOOR ( ENT(pev) );

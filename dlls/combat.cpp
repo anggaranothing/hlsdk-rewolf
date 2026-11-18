@@ -175,7 +175,7 @@ void CGib :: SpawnStickyGibs( entvars_t *pevVictim, Vector vecOrigin, int cGibs 
 			pGib->pev->movetype = MOVETYPE_TOSS;
 			pGib->pev->solid = SOLID_BBOX;
 			UTIL_SetSize ( pGib->pev, Vector ( 0, 0 ,0 ), Vector ( 0, 0, 0 ) );
-			pGib->SetTouch ( StickyGibTouch );
+			pGib->SetTouch ( &CGib::StickyGibTouch );
 			pGib->SetThink (NULL);
 		}
 		pGib->LimitVelocity();
@@ -511,7 +511,7 @@ void CBaseMonster :: GibMonster( void )
 		if ( gibbed )
 		{
 			// don't remove players!
-			SetThink ( SUB_Remove );
+			SetThink ( &CBaseEntity::SUB_Remove );
 			pev->nextthink = gpGlobals->time;
 		}
 		else
@@ -923,7 +923,7 @@ void CBaseEntity :: SUB_StartFadeOut ( void )
 	pev->avelocity = g_vecZero;
 
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink ( SUB_FadeOut );
+	SetThink ( &CBaseEntity::SUB_FadeOut );
 }
 
 void CBaseEntity :: SUB_FadeOut ( void  )
@@ -937,7 +937,7 @@ void CBaseEntity :: SUB_FadeOut ( void  )
 	{
 		pev->renderamt = 0;
 		pev->nextthink = gpGlobals->time + 0.2;
-		SetThink ( SUB_Remove );
+		SetThink ( &CBaseEntity::SUB_Remove );
 	}
 }
 
@@ -957,7 +957,7 @@ void CGib :: WaitTillLand ( void )
 
 	if ( pev->velocity == g_vecZero )
 	{
-		SetThink (SUB_StartFadeOut);
+		SetThink (&CBaseEntity::SUB_StartFadeOut);
 		pev->nextthink = gpGlobals->time + m_lifeTime;
 
 		// If you bleed, you stink!
@@ -980,7 +980,7 @@ void CGib :: GibSmokeThink ( void )
 
 	if ( m_lifeTime < gpGlobals->time )
 	{
-		SetThink ( SUB_StartFadeOut );
+		SetThink ( &CBaseEntity::SUB_StartFadeOut );
 		return;
 	}
 
@@ -1018,7 +1018,7 @@ void CGib :: StartSmoke ( int iType )
 		break;
 	}
 
-	SetThink ( GibSmokeThink );
+	SetThink ( &CGib::GibSmokeThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	m_lifeTime = pev->nextthink + 25;
 }
@@ -1074,7 +1074,7 @@ void CGib :: StickyGibTouch ( CBaseEntity *pOther )
 	Vector	vecSpot;
 	TraceResult	tr;
 	
-	SetThink ( SUB_Remove );
+	SetThink ( &CBaseEntity::SUB_Remove );
 	pev->nextthink = gpGlobals->time + 10;
 
 	if ( !FClassnameIs( pOther->pev, "worldspawn" ) )
@@ -1116,8 +1116,8 @@ void CGib :: Spawn( const char *szGibModel )
 
 	pev->nextthink = gpGlobals->time + 0.1;
 	m_lifeTime = 25;
-	SetThink ( WaitTillLand );
-	SetTouch ( BounceGibTouch );
+	SetThink ( &CGib::WaitTillLand );
+	SetTouch ( &CGib::BounceGibTouch );
 
 	m_material = matNone;
 	m_cBloodDecals = 2;// how many blood decals this gib can place (1 per bounce until none remain). 

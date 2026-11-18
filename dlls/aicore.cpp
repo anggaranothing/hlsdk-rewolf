@@ -306,7 +306,7 @@ void CAicore::PrimaryAttack( void )
 			m_flTimeWeaponIdle = gpGlobals->time + 8.0;
 
 			int iResult = m_WallPlug->PlugIn( m_pPlayer->pev );
-			m_WallPlug->SetThink( CAiWallPlug::AiWallPlugThink );
+			m_WallPlug->SetThink( &CAiWallPlug::AiWallPlugThink );
 			m_WallPlug->pev->nextthink = gpGlobals->time + 0.1;
 
 			if ( iResult == 0 )
@@ -325,7 +325,7 @@ void CAicore::PrimaryAttack( void )
 			{
 				RetireWeapon( );
 				m_pPlayer->pev->weapons &= ~(1<<WEAPON_AICORE);
-				SetThink( DestroyItem );
+				SetThink( &CBasePlayerItem::DestroyItem );
 				pev->nextthink = gpGlobals->time + 0.1;
 			}
 			m_flRetireWeapon = 0;
@@ -392,7 +392,7 @@ void CAicore::WeaponIdle( void )
 			m_flTimeWeaponIdle = gpGlobals->time + 8.0;
 
 			int iResult = m_WallPlug->PlugIn( m_pPlayer->pev );
-			m_WallPlug->SetThink( CAiWallPlug::AiWallPlugThink );
+			m_WallPlug->SetThink( &CAiWallPlug::AiWallPlugThink );
 			m_WallPlug->pev->nextthink = gpGlobals->time + 0.1;
 
 			if ( iResult == 0 )
@@ -412,7 +412,7 @@ void CAicore::WeaponIdle( void )
 			{
 				RetireWeapon( );
 				m_pPlayer->pev->weapons &= ~(1<<WEAPON_AICORE);
-				SetThink( DestroyItem );
+				SetThink( &CBasePlayerItem::DestroyItem );
 				pev->nextthink = gpGlobals->time + 0.1;
 			}
 			m_flRetireWeapon = 0;
@@ -462,7 +462,7 @@ void CAicoreTemp::Spawn( void )
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	SetThink( NULL );
-	SetTouch( DestroyTouch );
+	SetTouch( &CAicoreTemp::DestroyTouch );
 	ResetSequenceInfo( );
 }
 

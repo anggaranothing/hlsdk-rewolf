@@ -85,7 +85,7 @@ void CLaserSpot::Suspend( float flSuspendTime )
 {
 	pev->effects |= EF_NODRAW;
 
-	SetThink( Revive );
+	SetThink( &CLaserSpot::Revive );
 	pev->nextthink = gpGlobals->time + flSuspendTime;
 }
 
@@ -135,8 +135,8 @@ void CClusterGrenade::Spawn( void )
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
-	SetTouch( BounceTouch );
-	SetThink( TumbleClusterThink );
+	SetTouch( &CGrenade::BounceTouch );
+	SetThink( &CClusterGrenade::TumbleClusterThink );
 	pev->dmgtime = gpGlobals->time + flDetonate;
 	pev->nextthink = gpGlobals->time + 0.1;
 	pev->framerate = 1.0;
@@ -202,7 +202,7 @@ void CClusterGrenade::TumbleClusterThink( void )
 
 	if (pev->dmgtime <= gpGlobals->time)
 	{
-		SetThink( ClusterDetonate );
+		SetThink( &CClusterGrenade::ClusterDetonate );
 	}
 	if (pev->waterlevel != 0)
 	{
@@ -258,7 +258,7 @@ void CClusterGrenade::ClusterExplode( TraceResult *pTrace, int bitsDamageType )
 	pev->effects |= EF_NODRAW;
 	pev->velocity = g_vecZero;
 	pev->nextthink = gpGlobals->time;
-	SetThink( ClusterSmokeThink );
+	SetThink( &CClusterGrenade::ClusterSmokeThink );
 }
 
 void CClusterGrenade::ClusterSmokeThink( void )

@@ -94,7 +94,7 @@ void CDragonfly::Spawn( void )
 
 	pev->frame = 0;
 	pev->nextthink = gpGlobals->time + 0.1;
-	SetThink( IdleThink );
+	SetThink( &CDragonfly::IdleThink );
 }
 
 void CDragonfly::Precache( void )
@@ -112,7 +112,7 @@ void CDragonfly::Killed( entvars_t *pevAttacker, int iGib )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 	pev->movetype = MOVETYPE_TOSS;
 
-	SetThink( FallHack );
+	SetThink( &CDragonfly::FallHack );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -161,7 +161,7 @@ void CDragonfly::IdleThink( void )
 	// see if there's a client in the same pvs as the monster
 	if ( !FNullEnt( FIND_CLIENT_IN_PVS( edict() ) ) )
 	{
-		SetThink( Start );
+		SetThink( &CDragonfly::Start );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
@@ -173,7 +173,7 @@ void CDragonfly::Start( void )
 {
 	pev->nextthink = gpGlobals->time + 0.1;
 
-	SetThink( FlockLeaderThink );
+	SetThink( &CDragonfly::FlockLeaderThink );
 
 	SetActivity( ACT_FLY );
 	ResetSequenceInfo();
@@ -467,7 +467,7 @@ void CButterflyFlock::SpawnFlock( void )
 
 		pBoid->pev->frame = 0;
 		pBoid->pev->nextthink = gpGlobals->time + 0.2;
-		pBoid->SetThink( CButterfly :: IdleThink );
+		pBoid->SetThink( &CButterfly::IdleThink );
 
 		if ( pBoid != pLeader )
 		{
@@ -504,7 +504,7 @@ void CButterfly::Spawn( void )
 	pev->frame = 0;
 	pev->nextthink = gpGlobals->time + 0.1;
 	m_fTempLeader = gpGlobals->time;
-	SetThink( IdleThink );
+	SetThink( &CButterfly::IdleThink );
 }
 
 void CButterfly::Precache( void )
@@ -537,7 +537,7 @@ void CButterfly::Killed( entvars_t *pevAttacker, int iGib )
 	UTIL_SetSize( pev, Vector(0,0,0), Vector(0,0,0) );
 	pev->movetype = MOVETYPE_TOSS;
 
-	SetThink ( FallHack );
+	SetThink ( &CButterfly::FallHack );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -604,7 +604,7 @@ void CButterfly::IdleThink( void )
 	// see if there's a client in the same pvs as the monster
 	if ( !FNullEnt( FIND_CLIENT_IN_PVS( edict() ) ) )
 	{
-		SetThink( Start );
+		SetThink( &CButterfly::Start );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 }
@@ -618,11 +618,11 @@ void CButterfly::Start( void )
 
 	if ( IsLeader() )
 	{
-		SetThink( FlockLeaderThink );
+		SetThink( &CButterfly::FlockLeaderThink );
 	}
 	else
 	{
-		SetThink( FlockFollowerThink );
+		SetThink( &CButterfly::FlockFollowerThink );
 	}
 
 	SetActivity ( ACT_FLY );
@@ -662,7 +662,7 @@ void CButterfly::FormFlock( void )
 		}
 	}
 
-	SetThink( IdleThink );// now that flock is formed, go to idle and wait for a player to come along.
+	SetThink( &CButterfly::IdleThink );// now that flock is formed, go to idle and wait for a player to come along.
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -788,7 +788,7 @@ void CButterfly::FlockLeaderThink( void )
 	// a follower leading for a while goes back to following
 	if ( !IsLeader() && m_fTempLeader < gpGlobals->time )
 	{
-		SetThink( FlockFollowerThink );
+		SetThink( &CButterfly::FlockFollowerThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
 	}
@@ -901,7 +901,7 @@ void CButterfly::FlockFollowerThink( void )
 	// stalled: lead for a few seconds
 	if ( pev->velocity.Length() < 5 )
 	{
-		SetThink( FlockLeaderThink );
+		SetThink( &CButterfly::FlockLeaderThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 		m_fTempLeader = gpGlobals->time + RANDOM_LONG( 5, 24 );
 		return;
@@ -910,7 +910,7 @@ void CButterfly::FlockFollowerThink( void )
 	if ( IsLeader() || !InSquad() )
 	{
 		// the leader has been killed and this flyer suddenly finds himself the leader.
-		SetThink ( FlockLeaderThink );
+		SetThink ( &CButterfly::FlockLeaderThink );
 		return;
 	}
 

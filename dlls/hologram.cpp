@@ -112,7 +112,7 @@ void CDigitGod::Spawn( void )
 	m_pDigits1 = CBaseEntity::Create( "entity_digit", pev->origin, pev->angles, edict() );
 	m_pDigits2 = CBaseEntity::Create( "entity_digit", pev->origin + gpGlobals->v_right * -16, pev->angles, edict() );
 
-	SetThink( OutputThink );
+	SetThink( &CDigitGod::OutputThink );
 	pev->nextthink = gpGlobals->time;
 	m_iNumber = 0;
 	SetNumber( 0 );
@@ -280,8 +280,8 @@ void CHologram::Spawn( void )
 	pev->renderamt = 150;
 	pev->rendermode = kRenderTransAdd;
 
-	SetThink( HologramThink );
-	SetUse( UseToggle );
+	SetThink( &CHologram::HologramThink );
+	SetUse( &CHologram::UseToggle );
 	pev->nextthink = gpGlobals->time + 0.1;
 
 	if ( m_iCreature == HOLOGRAM_BEAK )
@@ -328,7 +328,7 @@ void CHologram::SpawnThink( void )
 		WRITE_BYTE( 10 );	// life
 	MESSAGE_END( );
 
-	SetThink( HologramThink );
+	SetThink( &CHologram::HologramThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 	UTIL_SetOrigin( pev, pev->origin );
 }
@@ -379,7 +379,7 @@ void CHologram::HologramThink( void )
 
 	if ( m_flDieTime != 0 && m_flDieTime < gpGlobals->time )
 	{
-		SetThink( DieThink );
+		SetThink( &CHologram::DieThink );
 		pev->nextthink = gpGlobals->time;
 	}
 
@@ -475,7 +475,7 @@ void CHologram::DieThink( void )
 		MESSAGE_END( );
 
 		pev->renderamt = 0;
-		SetThink( RespawnHologram );
+		SetThink( &CHologram::RespawnHologram );
 		pev->nextthink = gpGlobals->time + 2.0;
 		return;
 	}
@@ -495,7 +495,7 @@ void CHologram::RespawnHologram( void )
 	m_bDying = FALSE;
 	pev->health = 60;
 	pev->renderamt = 150;
-	SetThink( HologramThink );
+	SetThink( &CHologram::HologramThink );
 	m_iDamageCount = 0;
 	m_flDieTime = 0;
 
@@ -512,7 +512,7 @@ void CHologram::UseToggle( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 {
 	if ( !m_iState )
 	{
-		SetThink( SpawnThink );
+		SetThink( &CHologram::SpawnThink );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 	else

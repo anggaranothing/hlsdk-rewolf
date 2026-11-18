@@ -186,7 +186,7 @@ void CFists::PrimaryAttack()
 {
 	if (! Swing( 1 ))
 	{
-		SetThink( SwingAgain );
+		SetThink( &CFists::SwingAgain );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 
@@ -381,7 +381,7 @@ int CFists::Swing( int fFirst )
 
 		// delay the decal a bit
 		m_trHit = tr;
-		SetThink( Smack );
+		SetThink( &CFists::Smack );
 		pev->nextthink = gpGlobals->time + 0.2;
 
 		m_pPlayer->m_iWeaponVolume = flVol * CROWBAR_WALLHIT_VOLUME;

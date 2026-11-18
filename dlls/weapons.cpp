@@ -466,8 +466,8 @@ void CBasePlayerItem :: FallInit( void )
 	UTIL_SetOrigin( pev, pev->origin );
 	UTIL_SetSize(pev, Vector( 0, 0, 0), Vector(0, 0, 0) );//pointsize until it lands on the ground.
 	
-	SetTouch( DefaultTouch );
-	SetThink( FallThink );
+	SetTouch( &CBasePlayerItem::DefaultTouch );
+	SetThink( &CBasePlayerItem::FallThink );
 
 	pev->nextthink = gpGlobals->time + 0.1;
 }
@@ -517,8 +517,8 @@ void CBasePlayerItem::Materialize( void )
 	pev->solid = SOLID_TRIGGER;
 
 	UTIL_SetOrigin( pev, pev->origin );// link into world.
-	SetTouch (DefaultTouch);
-	SetThink (RemoveGlow);
+	SetTouch (&CBasePlayerItem::DefaultTouch);
+	SetThink (&CBasePlayerItem::RemoveGlow);
 	pev->nextthink = gpGlobals->time + 10.0;
 }
 
@@ -579,7 +579,7 @@ CBaseEntity* CBasePlayerItem::Respawn( void )
 	{
 		pNewWeapon->pev->effects |= EF_NODRAW;// invisible for now
 		pNewWeapon->SetTouch( NULL );// no touch
-		pNewWeapon->SetThink( AttemptToMaterialize );
+		pNewWeapon->SetThink( &CBasePlayerItem::AttemptToMaterialize );
 
 		DROP_TO_FLOOR ( ENT(pev) );
 
@@ -739,14 +739,14 @@ int CBasePlayerItem::AddToPlayer( CBasePlayer *pPlayer )
 void CBasePlayerItem::Drop( void )
 {
 	SetTouch( NULL );
-	SetThink(SUB_Remove);
+	SetThink(&CBaseEntity::SUB_Remove);
 	pev->nextthink = gpGlobals->time + .1;
 }
 
 void CBasePlayerItem::Kill( void )
 {
 	SetTouch( NULL );
-	SetThink(SUB_Remove);
+	SetThink(&CBaseEntity::SUB_Remove);
 	pev->nextthink = gpGlobals->time + .1;
 }
 
@@ -1074,8 +1074,8 @@ void CBasePlayerAmmo::Spawn( void )
 	UTIL_SetSize(pev, Vector(-16, -16, 0), Vector(16, 16, 16));
 	UTIL_SetOrigin( pev, pev->origin );
 
-	SetThink( GlowThink );
-	SetTouch( DefaultTouch );
+	SetThink( &CBasePlayerAmmo::GlowThink );
+	SetTouch( &CBasePlayerAmmo::DefaultTouch );
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -1114,7 +1114,7 @@ CBaseEntity* CBasePlayerAmmo::Respawn( void )
 
 	UTIL_SetOrigin( pev, g_pGameRules->VecAmmoRespawnSpot( this ) );// move to wherever I'm supposed to repawn.
 
-	SetThink( Materialize );
+	SetThink( &CBasePlayerAmmo::Materialize );
 	pev->nextthink = g_pGameRules->FlAmmoRespawnTime( this );
 
 	return this;
@@ -1127,11 +1127,11 @@ void CBasePlayerAmmo::Materialize( void )
 		// changing from invisible state to visible.
 		EMIT_SOUND_DYN( ENT(pev), CHAN_WEAPON, "items/suitchargeok1.wav", 1, ATTN_NORM, 0, 150 );
 		pev->effects &= ~EF_NODRAW;
-		SetThink( GlowThink );
+		SetThink( &CBasePlayerAmmo::GlowThink );
 		pev->nextthink = gpGlobals->time;
 	}
 
-	SetTouch( DefaultTouch );
+	SetTouch( &CBasePlayerAmmo::DefaultTouch );
 }
 
 void CBasePlayerAmmo :: DefaultTouch( CBaseEntity *pOther )
@@ -1155,7 +1155,7 @@ void CBasePlayerAmmo :: DefaultTouch( CBaseEntity *pOther )
 		else
 		{
 			SetTouch( NULL );
-			SetThink(SUB_Remove);
+			SetThink(&CBaseEntity::SUB_Remove);
 			pev->nextthink = gpGlobals->time + .1;
 		}
 	}
@@ -1163,7 +1163,7 @@ void CBasePlayerAmmo :: DefaultTouch( CBaseEntity *pOther )
 	{
 		// evil impulse 101 hack, kill always
 		SetTouch( NULL );
-		SetThink(SUB_Remove);
+		SetThink(&CBaseEntity::SUB_Remove);
 		pev->nextthink = gpGlobals->time + .1;
 	}
 }
@@ -1300,7 +1300,7 @@ void CWeaponBox::Kill( void )
 
 		while ( pWeapon )
 		{
-			pWeapon->SetThink(SUB_Remove);
+			pWeapon->SetThink(&CBaseEntity::SUB_Remove);
 			pWeapon->pev->nextthink = gpGlobals->time + 0.1;
 			pWeapon = pWeapon->m_pNext;
 		}

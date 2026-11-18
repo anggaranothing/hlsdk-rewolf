@@ -83,7 +83,7 @@ void CLeafGod::Spawn( void )
 	SET_MODEL( ENT( pev ), STRING( pev->model ) );
 
 	// let the func_winds spawn first
-	SetThink( PreWindThink );
+	SetThink( &CLeafGod::PreWindThink );
 	pev->nextthink = gpGlobals->time + 1;
 }
 
@@ -135,7 +135,7 @@ void CLeafGod::PreWindThink( void )
 	else
 		m_pWind = NULL;
 
-	SetThink( PostWindThink );
+	SetThink( &CLeafGod::PostWindThink );
 }
 
 void CLeafGod::PostWindThink( void )
@@ -180,8 +180,8 @@ void CLeaf::Spawn( void )
 	pev->avelocity.y = RANDOM_FLOAT( -150, 150 );
 	pev->avelocity.z = RANDOM_FLOAT( -150, 150 );
 
-	SetTouch( KillTouch );
-	SetThink( LeafThink );
+	SetTouch( &CLeaf::KillTouch );
+	SetThink( &CLeaf::LeafThink );
 	pev->nextthink = gpGlobals->time + 0.1;
 }
 

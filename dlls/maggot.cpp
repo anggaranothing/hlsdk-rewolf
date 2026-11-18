@@ -50,7 +50,7 @@ void CMaggotGib::FlopAnim( void )
 	if ( m_fSequenceFinished )
 	{
 		pev->framerate = 0;
-		SetThink( SUB_StartFadeOut );
+		SetThink( &CBaseEntity::SUB_StartFadeOut );
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
 	else
@@ -72,7 +72,7 @@ void CMaggotGib::Spawn( void )
 	pev->effects = 0;
 	pev->takedamage = DAMAGE_NO;
 
-	SetThink( FlopAnim );
+	SetThink( &CMaggotGib::FlopAnim );
 	SetSequenceByName( "dead" );
 	SetTouch( NULL );
 	SetUse( NULL );
@@ -281,7 +281,7 @@ void CMaggot::Spawn( void )
 	pev->view_ofs = Vector( 0, 0, 20 );
 	m_afCapability |= bits_CAP_MELEE_ATTACK1;
 
-	SetTouch( SquashTouch );
+	SetTouch( &CMaggot::SquashTouch );
 }
 
 //=========================================================
@@ -389,7 +389,7 @@ void CMaggot::RunTask( Task_t *pTask )
 		if ( m_fSequenceFinished )
 		{
 			TaskComplete( );
-			SetTouch( SquashTouch );
+			SetTouch( &CMaggot::SquashTouch );
 			m_IdealActivity = ACT_IDLE;
 		}
 		break;
@@ -401,7 +401,7 @@ void CMaggot::RunTask( Task_t *pTask )
 
 void CMaggot::Launch( void )
 {
-	SetTouch( LaunchedTouch );
+	SetTouch( &CMaggot::LaunchedTouch );
 	SET_MODEL( ENT(pev), "models/larva.mdl" );
 	UTIL_SetSize( pev, Vector( -12, -12, 0 ), Vector( 12, 12, 8 ) );
 	UTIL_SetOrigin( pev, pev->origin );
@@ -434,7 +434,7 @@ void CMaggot::LaunchedTouch( CBaseEntity *pOther )
 		}
 
 		SetTouch( NULL );
-		SetThink( SUB_Remove );
+		SetThink( &CBaseEntity::SUB_Remove );
 		pev->nextthink = gpGlobals->time + 0.1;
 		return;
 	}
@@ -446,7 +446,7 @@ void CMaggot::LaunchedTouch( CBaseEntity *pOther )
 	if ( g_iSkillLevel == SKILL_HARD && !UTIL_PercentChance( 65 ) )
 	{
 		pev->avelocity = g_vecZero;
-		SetTouch( SquashTouch );
+		SetTouch( &CMaggot::SquashTouch );
 		return;
 	}
 
@@ -500,7 +500,7 @@ void CMaggot::LeapTouch( CBaseEntity *pOther )
 		}
 	}
 
-	SetTouch( SquashTouch );
+	SetTouch( &CMaggot::SquashTouch );
 }
 
 //=========================================================
@@ -524,7 +524,7 @@ void CMaggot::StartTask( Task_t *pTask )
 	case TASK_MELEE_ATTACK2:
 		{
 			m_IdealActivity = ACT_LEAP;
-			SetTouch( LeapTouch );
+			SetTouch( &CMaggot::LeapTouch );
 
 			// the headcrab's jump
 			ClearBits( pev->flags, FL_ONGROUND );
